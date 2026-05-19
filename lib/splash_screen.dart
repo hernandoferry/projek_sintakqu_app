@@ -46,9 +46,12 @@ class SplashScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 14, color: Color(0xFF44474E)),
                   ),
                   Spacer(),
-                  Text(
-                    'Versi : 1.0.0',
-                    style: TextStyle(color: Color(0xFFC5C6CF)),
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(bottom: 14.0),
+                    child: Text(
+                      'Versi : 1.0.0',
+                      style: TextStyle(color: Color(0xFFC5C6CF)),
+                    ),
                   ),
                 ],
               ),
