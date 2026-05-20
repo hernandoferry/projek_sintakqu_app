@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/splash_screen.dart';
+import 'package:projek_sintakqu_app/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: SplashScreen(),
+      //home: SplashScreen(),
+      home: Login(),
     );
   }
 }
