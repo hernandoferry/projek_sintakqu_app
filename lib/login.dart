@@ -1,0 +1,281 @@
+import 'package:flutter/material.dart';
+
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final _formKey = GlobalKey<FormState>();
+  bool intipPasword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(
+                context,
+              ).size.width, // 💡 Mengikuti lebar layar gawai asli
+              height: MediaQuery.of(
+                context,
+              ).size.height, // 💡 Mengikuti tinggi layar gawai asli
+              color: const Color(0XFFF7FAFD),
+              child: Column(
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 80,
+                            left: 103,
+                            right: 107,
+                          ),
+                          child: Image.asset("assets/images/icon_login.png"),
+                        ),
+                        const SizedBox(height: 11),
+                        const Text(
+                          'SintakQu',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 349,
+                    height: 390,
+                    decoration: BoxDecoration(
+                      color: const Color(0XFFFFFFFF),
+                      border: Border.all(
+                        color: const Color(0xFFBFBBBB),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 14, top: 15),
+                          child: Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0XFF000000),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14),
+                          child: Text(
+                            'Enter your credential to access your account',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 14),
+                          child: Text(
+                            'Email Address',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 12,
+                                    ),
+                                    hintText: 'ex: youremail@mail.co.id',
+                                    hintStyle: const TextStyle(fontSize: 12),
+                                    fillColor: const Color(
+                                      0xFFF3F9FF,
+                                    ), // 💡 Cara benar mewarnai background form
+                                    filled: true,
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.blue,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(7.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(7.0),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                const Row(
+                                  children: [
+                                    Text(
+                                      'Password',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Text(
+                                      'Forgot Password ?',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF0266FF),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                TextFormField(
+                                  obscureText: intipPasword,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  decoration: InputDecoration(
+                                    fillColor: Color(0xFFF3F9FF),
+                                    filled: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 12,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.blue,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(7.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(7.0),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        intipPasword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          intipPasword = !intipPasword;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 21),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    // Lebar diatur infinity, tinggi diatur bebas (misal: 48)
+                                    minimumSize: const Size(
+                                      double.infinity,
+                                      48,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7.0),
+                                    ),
+                                    backgroundColor: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    Text('boom');
+                                  },
+                                  child: Text(
+                                    'Log in',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 22),
+                                Divider(),
+                                Row(
+                                  children: [
+                                    Spacer(),
+                                    Text(
+                                      "Don't have an account ?",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0XFF000000),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        "Register",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF0266FF),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 18),
+                  Padding(
+                    padding: EdgeInsets.only(left: 162),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.verified_user,
+                          color: Color(0xFF0266FF),
+                          size: 15,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          "Secure SSL Encription",
+                          style: TextStyle(
+                            color: Color(0xFFBFBBBB),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
