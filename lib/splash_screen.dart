@@ -9,8 +9,8 @@ class SplashScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            height: 811,
-            width: 375,
+            height: 914,
+            width: 420,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -28,9 +28,9 @@ class SplashScreen extends StatelessWidget {
                 children: [
                   Spacer(),
                   Image.asset(
-                    "assets/images/splash_image.png",
-                    width: 220,
-                    height: 220,
+                    "assets/images/icon_dompet.png",
+                    width: 330,
+                    height: 330,
                   ),
                   Text(
                     'SintakQu',
