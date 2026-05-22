@@ -49,10 +49,10 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Container(
                     width: 349,
-                    height: 390,
+                    height: 400,
                     decoration: BoxDecoration(
                       color: const Color(0XFFFFFFFF),
                       border: Border.all(
@@ -110,9 +110,7 @@ class _LoginState extends State<Login> {
                                     ),
                                     hintText: 'ex: youremail@mail.co.id',
                                     hintStyle: const TextStyle(fontSize: 12),
-                                    fillColor: const Color(
-                                      0xFFF3F9FF,
-                                    ), // 💡 Cara benar mewarnai background form
+                                    fillColor: const Color(0xFFF3F9FF),
                                     filled: true,
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: const BorderSide(
@@ -193,7 +191,6 @@ class _LoginState extends State<Login> {
                                 SizedBox(height: 21),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    // Lebar diatur infinity, tinggi diatur bebas (misal: 48)
                                     minimumSize: const Size(
                                       double.infinity,
                                       48,
@@ -250,7 +247,7 @@ class _LoginState extends State<Login> {
                   ),
                   SizedBox(height: 18),
                   Padding(
-                    padding: EdgeInsets.only(left: 162),
+                    padding: EdgeInsets.only(left: 140),
                     child: Row(
                       children: [
                         Icon(
