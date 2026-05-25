@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:projek_sintakqu_app/register.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,12 +20,8 @@ class _LoginState extends State<Login> {
         child: Column(
           children: [
             Container(
-              width: MediaQuery.of(
-                context,
-              ).size.width, // 💡 Mengikuti lebar layar gawai asli
-              height: MediaQuery.of(
-                context,
-              ).size.height, // 💡 Mengikuti tinggi layar gawai asli
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               color: const Color(0XFFF7FAFD),
               child: Column(
                 children: [
@@ -79,7 +77,7 @@ class _LoginState extends State<Login> {
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 14),
                           child: Text(
-                            'Enter your credential to access your account',
+                            'Masukan alamat email dan kata sandi akun anda',
                             style: TextStyle(fontSize: 12),
                           ),
                         ),
@@ -87,7 +85,7 @@ class _LoginState extends State<Login> {
                         const Padding(
                           padding: EdgeInsets.only(left: 14),
                           child: Text(
-                            'Email Address',
+                            'Alamat E-mail',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -132,7 +130,7 @@ class _LoginState extends State<Login> {
                                 const Row(
                                   children: [
                                     Text(
-                                      'Password',
+                                      'Kata Sandi',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
@@ -140,7 +138,7 @@ class _LoginState extends State<Login> {
                                     ),
                                     Spacer(),
                                     Text(
-                                      'Forgot Password ?',
+                                      'Lupa Kata Sandi ?',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
@@ -204,7 +202,7 @@ class _LoginState extends State<Login> {
                                     Text('boom');
                                   },
                                   child: Text(
-                                    'Log in',
+                                    'MASUK',
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -214,27 +212,45 @@ class _LoginState extends State<Login> {
                                 ),
                                 SizedBox(height: 22),
                                 Divider(),
+
                                 Row(
                                   children: [
                                     Spacer(),
-                                    Text(
-                                      "Don't have an account ?",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0XFF000000),
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                        "Register",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFF0266FF),
-                                          fontWeight: FontWeight.w600,
+                                    RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color:
+                                              Colors.grey, // Warna teks biasa
                                         ),
+                                        children: [
+                                          const TextSpan(
+                                            text: 'Belum memiliki akun ? ',
+                                          ),
+                                          TextSpan(
+                                            text: 'DAFTAR DISINI',
+                                            style: const TextStyle(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Register(),
+                                                  ),
+                                                );
+                                              },
+                                          ),
+                                        ],
                                       ),
                                     ),
+
                                     Spacer(),
                                   ],
                                 ),
