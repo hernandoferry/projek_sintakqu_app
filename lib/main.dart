@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:projek_sintakqu_app/splash_screen.dart';
 // import 'package:projek_sintakqu_app/login.dart';
-import 'package:projek_sintakqu_app/register.dart';
+// import 'package:projek_sintakqu_app/register.dart';
+import 'package:projek_sintakqu_app/home/index_home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
       // home: SplashScreen(),
       // home: Login(),
-      home: Register(),
+      // home: Register(),
+      home: IndexHome(),
     );
   }
 }
