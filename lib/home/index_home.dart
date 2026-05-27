@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projek_sintakqu_app/home/branda.dart';
+import 'package:projek_sintakqu_app/transaksi/transaksi.dart';
 
 class IndexHome extends StatefulWidget {
   const IndexHome({super.key});
@@ -13,7 +14,7 @@ class _IndexHomeState extends State<IndexHome> {
 
   final List<Widget> _pages = [
     const Branda(),
-    const Text('transaksi'),
+    const Transaksi(),
     const Text("laporan"),
     const Text('boom'),
   ];

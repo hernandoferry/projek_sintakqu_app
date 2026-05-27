@@ -87,7 +87,7 @@ class _BrandaState extends State<Branda> {
           builder: (context, scrollController) {
             return Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFFF1F4F7),
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(16), // Sudut lengkung atas rounded rapi
                 ),
@@ -116,7 +116,7 @@ class _BrandaState extends State<Branda> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "10 Pengeluaran Terakhir",
+                          "Daftar Pengeluaran Terakhir",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _BrandaState extends State<Branda> {
                           "Terbaru",
                           style: TextStyle(
                             fontSize: 12,
-                            color: const Color(0xFF0050CC).withOpacity(0.8),
+                            color: const Color(0xFF0050CC),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -158,13 +158,10 @@ class _BrandaState extends State<Branda> {
                             vertical: 2,
                           ),
                           leading: CircleAvatar(
-                            backgroundColor: const Color(
-                              0xFFF7FAFD,
-                            ), // Warna abu terang app bar Anda
+                            backgroundColor: const Color(0xFFF7FAFD),
                             radius: 20,
                             child: const Icon(
-                              Icons
-                                  .arrow_outward_rounded, // Ikon panah keluar (melambangkan pengeluaran uang)
+                              Icons.arrow_outward_rounded,
                               color: Colors.redAccent,
                               size: 20,
                             ),
@@ -189,9 +186,7 @@ class _BrandaState extends State<Branda> {
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
-                              color: Color(
-                                0xFF1F1F1F,
-                              ), // Nilai nominal hitam solid agar clean
+                              color: Color(0xFF1F1F1F),
                             ),
                           ),
                         );
