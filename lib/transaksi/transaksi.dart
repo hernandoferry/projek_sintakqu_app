@@ -53,13 +53,14 @@ class _TransaksiState extends State<Transaksi> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Pilih Aksi Struk',
+                  'Pilih sumber photo',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  textAlign: TextAlign.center,
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: Colors.blue),
-                title: const Text('Kamera (Ambil Foto)'),
+                title: const Text('Ambil dari kamera'),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickImage(ImageSource.camera);
@@ -67,7 +68,7 @@ class _TransaksiState extends State<Transaksi> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: Colors.green),
-                title: const Text('Galeri (Pilih dari HP)'),
+                title: const Text('Ambil dari Galeri'),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickImage(ImageSource.gallery);
@@ -133,7 +134,7 @@ class _TransaksiState extends State<Transaksi> {
                   padding: EdgeInsets.only(left: 16, right: 16),
                   child: Container(
                     width: 380,
-                    height: 501,
+                    height: 570,
                     decoration: BoxDecoration(color: Color(0xFFF7FAFD)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -227,7 +228,7 @@ class _TransaksiState extends State<Transaksi> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(7),
                               borderSide: const BorderSide(
-                                color: Color(0xFFE0E3E6),
+                                color: Color(0xFF75777F),
                                 width: 1,
                               ),
                             ),
@@ -295,7 +296,7 @@ class _TransaksiState extends State<Transaksi> {
                           },
                           child: Container(
                             width: double.infinity,
-                            height: 200,
+                            height: 105,
                             decoration: BoxDecoration(
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(12),
@@ -316,7 +317,7 @@ class _TransaksiState extends State<Transaksi> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Icon(
-                                          Icons.cloud_upload_outlined,
+                                          Icons.camera_alt_outlined,
                                           size: 48,
                                           color: Colors.grey,
                                         ),
@@ -332,6 +333,92 @@ class _TransaksiState extends State<Transaksi> {
                                     ),
                                   )
                                 : null,
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        Text("Catatan/Deskripsi"),
+                        SizedBox(height: 4),
+                        TextFormField(
+                          // controller: _keteranganController,
+                          keyboardType: TextInputType
+                              .multiline, // Untuk mengaktifkan tombol 'Enter' pada keyboard HP
+                          minLines: 3, //(tinggi awal kotak)
+                          maxLines:
+                              5, //Batas baris max sebelum kotak bisa di-scroll
+
+                          decoration: InputDecoration(
+                            labelText: 'Keterangan / Catatan',
+                            hintText:
+                                'Tulis detail catatan atau deskripsi di sini...',
+                            hintStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 16,
+                            ),
+
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E3E6),
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              borderSide: const BorderSide(
+                                color: Colors.blue,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              borderSide: const BorderSide(
+                                color: Colors.red,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(7),
+                              borderSide: const BorderSide(
+                                color: Colors.red,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              elevation: 2,
+                            ),
+                            onPressed: () {
+                              // 1. Validasi komponen berbasis form (Dropdown dan Text Area)
+                              if (_formKey.currentState!.validate()) {
+                                // 2. Jika semua validasi lolos, jalankan fungsi simpan data
+                                // _prosesSimpanTransaksi();
+                              }
+                            },
+                            child: const Text(
+                              "SIMPAN TRANSAKSI",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                letterSpacing:
+                                    1.1, // Memberikan sedikit jarak antar huruf
+                              ),
+                            ),
                           ),
                         ),
                       ],
