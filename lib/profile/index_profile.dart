@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projek_sintakqu_app/profile/pengaturan_akun.dart';
 
 class IndexProfile extends StatefulWidget {
   const IndexProfile({super.key});
@@ -140,7 +141,16 @@ class _IndexProfileState extends State<IndexProfile> {
                       ),
                       SizedBox(width: 16),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PengaturanAkun(),
+                              ),
+                            );
+                          });
+                        },
                         child: Row(
                           children: [
                             Text(
