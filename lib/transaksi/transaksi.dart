@@ -122,6 +122,15 @@ class _TransaksiState extends State<Transaksi> {
             Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
           ],
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(
+            1.0,
+          ), // Menentukan tinggi area border (1 pixel)
+          child: Container(
+            color: const Color(0xFFE0E3E6), // Warna garis border bawah
+            height: 1.0, // Ketebalan garis border
+          ),
+        ),
       ),
       body: Column(
         children: [
