@@ -12,9 +12,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFF5F5F5,
-      ), // Menambahkan background abu-abu tipis agar Container putih Anda terlihat jelas
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text(
           "Pengaturan Akun",
@@ -65,80 +63,85 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
                       ],
                     ),
                   ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Nama Lengkap',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: TextButton(
-                          onPressed: () {
-                            print("Tombol Edit ditekan");
-                          },
-                          child: const Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: Color(0xFF0050CC),
-                              fontWeight: FontWeight.bold,
+                  Form(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Nama Lengkap',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: TextButton(
+                                onPressed: () {
+                                  print("Tombol Edit ditekan");
+                                },
+                                child: const Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    color: Color(0xFF0050CC),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Alamat e-mail',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: TextButton(
-                          onPressed: () {
-                            print("Tombol Edit ditekan");
-                          },
-                          child: const Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: Color(0xFF0050CC),
-                              fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Alamat e-mail',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: TextButton(
+                                onPressed: () {
+                                  print("Tombol Edit ditekan");
+                                },
+                                child: const Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    color: Color(0xFF0050CC),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'No.Hp',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: TextButton(
-                          onPressed: () {
-                            print("Tombol Edit ditekan");
-                          },
-                          child: const Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: Color(0xFF0050CC),
-                              fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'No.Hp',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: TextButton(
+                                onPressed: () {
+                                  print("Tombol Edit ditekan");
+                                },
+                                child: const Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    color: Color(0xFF0050CC),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
