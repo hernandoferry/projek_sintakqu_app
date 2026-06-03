@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projek_sintakqu_app/home/branda.dart';
+import 'package:projek_sintakqu_app/laporan/index_laporan.dart';
 import 'package:projek_sintakqu_app/profile/index_profile.dart';
 import 'package:projek_sintakqu_app/profile/pengaturan_akun.dart';
 import 'package:projek_sintakqu_app/transaksi/transaksi.dart';
@@ -17,7 +18,7 @@ class _IndexHomeState extends State<IndexHome> {
   final List<Widget> _pages = [
     const Branda(),
     const Transaksi(),
-    const Text("laporan"),
+    const IndexLaporan(),
     const IndexProfile(),
     const PengaturanAkun(),
   ];
