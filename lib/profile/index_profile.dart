@@ -27,9 +27,7 @@ class _IndexProfileState extends State<IndexProfile> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 16,
-            ), // Jarak ikon dari sisi kanan layar
+            padding: const EdgeInsets.only(right: 16),
             child: IconButton(
               icon: const Icon(
                 Icons.notifications_none,
@@ -42,13 +40,8 @@ class _IndexProfileState extends State<IndexProfile> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(
-            1.0,
-          ), // Menentukan tinggi area border (1 pixel)
-          child: Container(
-            color: const Color(0xFFE0E3E6), // Warna garis border bawah
-            height: 1.0, // Ketebalan garis border
-          ),
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
       ),
       body: Column(
