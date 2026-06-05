@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
 import 'package:projek_sintakqu_app/login.dart';
 import 'package:projek_sintakqu_app/view/profile/keamanan.dart';
 import 'package:projek_sintakqu_app/view/profile/pengaturan_akun.dart';
@@ -126,10 +127,8 @@ class _IndexProfileState extends State<IndexProfile> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Color(
-                          0x1A0050CC,
-                        ), // Warna latar belakang
-                        radius: 20, // Mengatur ukuran total lingkaran
+                        backgroundColor: Color(0x1A0050CC),
+                        radius: 20,
                         child: Icon(
                           Icons.manage_accounts,
                           color: Color(0xFF0050CC),
@@ -169,10 +168,8 @@ class _IndexProfileState extends State<IndexProfile> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Color(
-                          0x1A0050CC,
-                        ), // Warna latar belakang
-                        radius: 20, // Mengatur ukuran total lingkaran
+                        backgroundColor: Color(0x1A0050CC),
+                        radius: 20,
                         child: Icon(Icons.security, color: Color(0xFF0050CC)),
                       ),
                       SizedBox(width: 16),
@@ -209,10 +206,8 @@ class _IndexProfileState extends State<IndexProfile> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Color(
-                          0x1A0050CC,
-                        ), // Warna latar belakang
-                        radius: 20, // Mengatur ukuran total lingkaran
+                        backgroundColor: Color(0x1A0050CC),
+                        radius: 20,
                         child: Icon(
                           Icons.contact_support,
                           color: Color(0xFF0050CC),
@@ -253,23 +248,23 @@ class _IndexProfileState extends State<IndexProfile> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Color(
-                          0x1ABA1A1A,
-                        ), // Warna latar belakang
-                        radius: 20, // Mengatur ukuran total lingkaran
+                        backgroundColor: Color(0x1ABA1A1A),
+                        radius: 20,
                         child: Icon(Icons.logout, color: Color(0xFFBA1A1A)),
                       ),
                       SizedBox(width: 16),
                       TextButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                              context,
+                        onPressed: () async {
+                          await DbHelper().logoutUser();
+                          if (context.mounted) {
+                            Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => const Login(),
                               ),
+                              (Route<dynamic> route) =>
+                                  false, // Menghapus semua halaman sebelumnya dari stack
                             );
-                          });
+                          }
                         },
                         child: Row(
                           children: [

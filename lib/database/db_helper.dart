@@ -96,6 +96,7 @@ class DbHelper {
     return await db.delete('transaksi', where: 'id = ?', whereArgs: [id]);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////
   // 6. Fungsi Registrasi Akun Baru
   Future<int> registrasiUser(Map<String, dynamic> data) async {
     final db = await database;
@@ -144,10 +145,12 @@ class DbHelper {
   Future<bool> cekStatusLogin() async {
     final db = await database;
 
+    // Mencari user yang sedang aktif login
     List<Map<String, dynamic>> hasil = await db.query(
       'user_sintakqu',
       where: 'is_login = ?',
-      whereArgs: [1], // Mencari user yang sedang aktif login
+      whereArgs: [1],
+      limit: 1,
     );
 
     return hasil.isNotEmpty;
@@ -162,5 +165,23 @@ class DbHelper {
       where: 'is_login = ?',
       whereArgs: [1],
     );
+  }
+
+  // 10. Ambil 1 data user
+  Future<Map<String, dynamic>?> getDataLoggeduser() async {
+    final db = await database;
+
+    // Ambil data user yang memiliki is_login = 1
+    final List<Map<String, dynamic>> maps = await db.query(
+      'user_sintakqu',
+      where: 'is_login = ?',
+      whereArgs: [1],
+      limit: 1, // Kita hanya butuh 1 user aktif
+    );
+
+    if (maps.isNotEmpty) {
+      return maps.first; // Kembalikan data user pertama yang ditemukan
+    }
+    return null; // Kembalikan null jika tidak ada yang login
   }
 }
