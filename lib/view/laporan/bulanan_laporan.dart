@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/laporan/detail_kategori_laporan.dart';
+import 'package:projek_sintakqu_app/view/laporan/detail_kategori_laporan.dart';
 
 class BulananLaporan extends StatefulWidget {
   const BulananLaporan({super.key});

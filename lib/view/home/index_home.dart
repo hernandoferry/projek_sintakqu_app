@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/home/branda.dart';
-import 'package:projek_sintakqu_app/laporan/index_laporan.dart';
-import 'package:projek_sintakqu_app/profile/index_profile.dart';
-import 'package:projek_sintakqu_app/profile/pengaturan_akun.dart';
-import 'package:projek_sintakqu_app/transaksi/transaksi.dart';
+import 'package:projek_sintakqu_app/view/home/branda.dart';
+import 'package:projek_sintakqu_app/view/laporan/index_laporan.dart';
+import 'package:projek_sintakqu_app/view/profile/index_profile.dart';
+import 'package:projek_sintakqu_app/view/profile/pengaturan_akun.dart';
+import 'package:projek_sintakqu_app/view/transaksi/transaksi.dart';
 
 class IndexHome extends StatefulWidget {
   const IndexHome({super.key});

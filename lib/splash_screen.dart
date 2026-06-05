@@ -1,7 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
+import 'package:projek_sintakqu_app/login.dart';
+import 'package:projek_sintakqu_app/view/home/index_home.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final DbHelper _dbHelper = DbHelper();
+  @override
+  void initState() {
+    super.initState();
+    _startCheckDelay();
+  }
+
+  Future<void> _startCheckDelay() async {
+    // 1. Berikan jeda waktu 3 detik
+    await Future.delayed(const Duration(seconds: 3));
+
+    // 2. Cek status login dari Sqflite
+    bool isLoggedIn = await _dbHelper.cekStatusLogin();
+
+    // 3. Pindah halaman
+    if (!mounted) return;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const IndexHome()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

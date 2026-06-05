@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projek_sintakqu_app/laporan/bulanan_laporan.dart';
-import 'package:projek_sintakqu_app/laporan/tahunan_laporan.dart';
+import 'package:projek_sintakqu_app/view/laporan/bulanan_laporan.dart';
+import 'package:projek_sintakqu_app/view/laporan/tahunan_laporan.dart';
 
 class IndexLaporan extends StatefulWidget {
   const IndexLaporan({super.key});
