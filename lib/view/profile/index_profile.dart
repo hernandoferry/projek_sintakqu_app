@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:projek_sintakqu_app/login.dart';
-import 'package:projek_sintakqu_app/profile/keamanan.dart';
-import 'package:projek_sintakqu_app/profile/pengaturan_akun.dart';
-import 'package:projek_sintakqu_app/profile/pusat_bantuan.dart';
+import 'package:projek_sintakqu_app/view/profile/keamanan.dart';
+import 'package:projek_sintakqu_app/view/profile/pengaturan_akun.dart';
+import 'package:projek_sintakqu_app/view/profile/pusat_bantuan.dart';
 
 class IndexProfile extends StatefulWidget {
   const IndexProfile({super.key});
