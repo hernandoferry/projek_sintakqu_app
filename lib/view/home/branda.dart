@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
 
 class Branda extends StatefulWidget {
   const Branda({super.key});
@@ -9,6 +10,8 @@ class Branda extends StatefulWidget {
 }
 
 class _BrandaState extends State<Branda> {
+  late Future<Map<String, dynamic>?> _ambilDataUserLogin;
+  bool _nominalPengeluaran = true;
   void tampilkanPengeluaranTerakhir(BuildContext context) {
     // Data statis berisi 10 daftar pengeluaran terakhir (diurutkan dari yang paling baru)
     final List<Map<String, String>> pengeluaranTerakhir = [
@@ -95,7 +98,6 @@ class _BrandaState extends State<Branda> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Handle Bar (Garis penarik di atas)
                   const SizedBox(height: 12),
                   Center(
                     child: Container(
@@ -109,7 +111,6 @@ class _BrandaState extends State<Branda> {
                   ),
                   const SizedBox(height: 18),
 
-                  // 2. Area Judul & Informasi Jumlah Data
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -120,9 +121,7 @@ class _BrandaState extends State<Branda> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(
-                              0xFF001A41,
-                            ), // Warna gelap senada dengan gradient atas Anda
+                            color: Color(0xFF001A41),
                           ),
                         ),
                         Text(
@@ -143,7 +142,6 @@ class _BrandaState extends State<Branda> {
                     color: Color(0xFFF0F0F0),
                   ),
 
-                  // 3. Daftar List Riwayat yang bisa di-scroll
                   Expanded(
                     child: ListView.builder(
                       controller:
@@ -158,11 +156,11 @@ class _BrandaState extends State<Branda> {
                             vertical: 2,
                           ),
                           leading: CircleAvatar(
-                            backgroundColor: const Color(0xFFF7FAFD),
+                            backgroundColor: const Color(0x1AFF5252),
                             radius: 20,
                             child: const Icon(
-                              Icons.arrow_outward_rounded,
-                              color: Colors.redAccent,
+                              Icons.shopping_bag,
+                              color: Color(0xFFFF5252),
                               size: 20,
                             ),
                           ),
@@ -203,43 +201,67 @@ class _BrandaState extends State<Branda> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Memanggil fungsi dari DbHelper
+    _ambilDataUserLogin = DbHelper().getDataLoggeduser();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset("assets/images/user_dummy.png"),
-            Padding(
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 18,
-                top: 18,
-                bottom: 18,
-              ),
+        title: FutureBuilder<Map<String, dynamic>?>(
+          future: _ambilDataUserLogin,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Memuat...');
+            }
 
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 40),
-                    child: Text(
-                      "Hallo,",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+            final userData = snapshot.data!;
+            final String namaUser = userData['nama_lengkap'] ?? 'Pengguna';
+
+            return Row(
+              children: [
+                Image.asset("assets/images/user_dummy.png"),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 18,
+                    top: 18,
+                    bottom: 18,
+                  ),
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: 40),
+                        child: Text(
+                          "Hallo,",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
+                      Text(
+                        namaUser,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Jhon Doe",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            Spacer(),
-            Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
-          ],
+                ),
+                Spacer(),
+                Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
+              ],
+            );
+          },
         ),
+
         backgroundColor: const Color(0xFFF7FAFD),
         elevation: 0,
         bottom: PreferredSize(
@@ -251,98 +273,108 @@ class _BrandaState extends State<Branda> {
         children: [
           SizedBox(height: 12),
           Padding(
-            padding: EdgeInsets.only(left: 16, right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
-              width: MediaQuery.of(context).size.width * 10,
-              height: 149,
+              // Menghapus perkalian lebar * 10 agar pas dengan layar ponsel
+              width: double.infinity,
+              height:
+                  165, // Sedikit dinaikkan agar ruang teks lebih lega dan proporsional
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft, // Titik awal gradasi mulai
-                  end: Alignment.bottomRight, // Titik akhir gradasi selesai
-                  colors: [
-                    Color(0xFF001A41), // Warna pertama (Hex Code)
-                    Color(0xFF0050CC), // Warna kedua (Hex Code)
-                  ],
-                  stops: const [
-                    0.0,
-                    1.0,
-                  ], // Opsional: mengatur distribusi perpindahan warna (0.0 - 1.0)
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF001A41), Color(0xFF0050CC)],
+                  stops: [0.0, 1.0],
                 ),
               ),
+              // Menggunakan Padding internal agar semua teks di dalam otomatis sejajar di kiri (20px)
+              padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Membuat semua teks rata kiri
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceBetween, // Membagi ruang vertikal secara merata
                 children: [
+                  // BARIS 1: Judul & Tombol Eye
                   Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 20, top: 20, right: 70),
+                      Expanded(
                         child: Text(
-                          "Total Pengeluaran September",
+                          "Total Pengeluaran Bulan Ini",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize:
+                                18, // Ukuran teks disesuaikan agar tidak terlalu besar
                             fontWeight: FontWeight.w500,
-                            color: Color(0x60FFFFFF),
+                            color: const Color(0xFFFFFFFF).withOpacity(0.6),
                           ),
                         ),
                       ),
-                      Spacer(),
-                      Padding(
-                        padding: EdgeInsets.only(right: 20, top: 20),
-                        child: Icon(
-                          Icons.remove_red_eye_outlined,
-                          color: Color(0x80FFFFFF),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
+                          _nominalPengeluaran
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: Colors.white,
                         ),
+                        onPressed: () {
+                          setState(() {
+                            _nominalPengeluaran = !_nominalPengeluaran;
+                          });
+                        },
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4, left: 20, right: 184),
-                    child: Text(
-                      "Rp 1.450.000",
-                      style: TextStyle(
-                        color: Color(0xFFFFFFFF),
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+
+                  Text(
+                    _nominalPengeluaran ? 'Rp ••••••••••••' : 'Rp 1.450.000',
+                    style: const TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20, right: 105),
-                    child: Container(
-                      height: 33,
-                      width: MediaQuery.of(context).size.width * 10,
-                      decoration: BoxDecoration(
-                        color: Color(0x1AFFFFFF),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8, bottom: 8),
-                        child: Row(
-                          children: [
-                            SizedBox(width: 12),
-                            const CircleAvatar(
-                              backgroundColor: Color(0xFFFFDCC3),
-                              radius: 15,
-                              child: Icon(Icons.star, size: 16.67),
-                            ),
 
-                            Text(
-                              "Membership Level : Standard",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFFFFDCC3),
-                              ),
-                            ),
-                          ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0x1AFFFFFF),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Color(0xFFFFDCC3),
+                          radius: 8,
+                          child: Icon(
+                            Icons.star,
+                            size: 10,
+                            color: Color(0xFF0050CC),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Membership Level : Standard",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFFFDCC3),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
+
           SizedBox(height: 19.33),
           Padding(
             padding: EdgeInsets.only(left: 16, right: 16),
@@ -464,7 +496,7 @@ class _BrandaState extends State<Branda> {
               ],
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 16),
           Padding(
             padding: EdgeInsets.only(left: 16, right: 16),
             child: Column(
@@ -531,7 +563,7 @@ class _BrandaState extends State<Branda> {
                             FlSpot(7, 40),
                           ],
                           isCurved: true, // Membuat garis melengkung (smooth)
-                          color: const Color(0xFF0050CC), // Warna garis grafik
+                          color: const Color(0xFFC07024), // Warna garis grafik
                           barWidth: 4, // Ketebalan garis
                           isStrokeCapRound: true,
                           dotData: const FlDotData(
@@ -540,11 +572,8 @@ class _BrandaState extends State<Branda> {
                           belowBarData: BarAreaData(
                             show:
                                 true, // Menampilkan warna gradasi di bawah garis
-                            color: const Color.fromARGB(
-                              255,
-                              12,
-                              12,
-                              12,
+                            color: const Color(
+                              0xFFC07024,
                             ).withValues(alpha: 0.2),
                           ),
                         ),
@@ -552,7 +581,7 @@ class _BrandaState extends State<Branda> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 4),
 
                 Container(
                   width: double.infinity,
@@ -636,9 +665,9 @@ class _BrandaState extends State<Branda> {
                           ),
                         ),
                         Divider(
-                          color: Colors.grey[400], // Mengubah warna garis
-                          thickness: 1, // Ketebalan garis pembatas
-                          indent: 20, // Jarak kosong di awal garis (kiri)
+                          color: Colors.grey[400],
+                          thickness: 1,
+                          indent: 20,
                           endIndent: 20,
                         ),
                         Padding(

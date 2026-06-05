@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart'; // Import package
+import 'package:image_picker/image_picker.dart';
 
 class Transaksi extends StatefulWidget {
   const Transaksi({super.key});
@@ -13,9 +13,9 @@ class Transaksi extends StatefulWidget {
 
 class _TransaksiState extends State<Transaksi> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nominalController = TextEditingController();
   String? selected;
 
-  //pendefinisian variabel untuk image_picker
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -23,15 +23,12 @@ class _TransaksiState extends State<Transaksi> {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: source,
-        imageQuality:
-            80, // Mengompres kualitas gambar (0-100) agar file tidak terlalu besar
+        imageQuality: 80,
       );
 
       if (pickedFile != null) {
         setState(() {
-          _imageFile = File(
-            pickedFile.path,
-          ); // Menyimpan file gambar terpilih ke variabel
+          _imageFile = File(pickedFile.path);
         });
       }
     } catch (e) {
@@ -39,7 +36,6 @@ class _TransaksiState extends State<Transaksi> {
     }
   }
 
-  //fungsi untuk menampilkan pilihan upload gambar/struk belanja dari kamera atau galery dengan menggunakan widget bottomsheet
   void _showImageSourceBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -74,10 +70,8 @@ class _TransaksiState extends State<Transaksi> {
                   _pickImage(ImageSource.gallery);
                 },
               ),
-
-              // FITUR BARU: Opsi Hapus Foto hanya muncul jika _imageFile TIDAK null
               if (_imageFile != null) ...[
-                const Divider(), // Garis pembatas tipis agar rapi
+                const Divider(),
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
                   title: const Text(
@@ -90,7 +84,7 @@ class _TransaksiState extends State<Transaksi> {
                   onTap: () {
                     Navigator.of(context).pop();
                     setState(() {
-                      _imageFile = null; // Menghapus instansi file gambar
+                      _imageFile = null;
                     });
                   },
                 ),
@@ -104,11 +98,19 @@ class _TransaksiState extends State<Transaksi> {
   }
 
   @override
+  void dispose() {
+    _nominalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7FAFD),
       appBar: AppBar(
-        backgroundColor: Color(0xFFF7FAFD),
-        title: Row(
+        backgroundColor: const Color(0xFFF7FAFD),
+        elevation: 0,
+        title: const Row(
           children: [
             Text(
               "Tambah Transaksi",
@@ -123,321 +125,294 @@ class _TransaksiState extends State<Transaksi> {
           ],
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(
-            1.0,
-          ), // Menentukan tinggi area border (1 pixel)
-          child: Container(
-            color: const Color(0xFFE0E3E6), // Warna garis border bawah
-            height: 1.0, // Ketebalan garis border
-          ),
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
       ),
-      body: Column(
-        children: [
-          Form(
-            key: _formKey,
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE0E3E6)),
+            ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: Container(
-                    width: 380,
-                    height: 570,
-                    decoration: BoxDecoration(color: Color(0xFFF7FAFD)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Nominal Transaksi",
-                          style: TextStyle(
-                            color: Color(0xFF44474E),
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        TextFormField(
-                          // controller: _nominalTransaksi,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          decoration: InputDecoration(
-                            hintText: "100.000",
-                            hintStyle: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              color: Color(0xFF181C1E),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFE0E3E6),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Color(
-                                  0xFFE0E0E0,
-                                ), // Warna abu-abu terang
-                                width: 1.5,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Color(0XFF0050CC),
-                                width:
-                                    2.0, // Garis sedikit lebih tebal saat aktif
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 1.5,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2.0,
-                              ),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Nominal transaksi harus di isi !";
-                            }
-                            return null;
-                          },
-                        ),
-
-                        SizedBox(height: 24),
-                        Text(
-                          "Kategori Transaksi",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF44474E),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        DropdownButtonFormField<String>(
-                          initialValue: selected,
-                          isExpanded: true, // Tetap rata kanan-kiri
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF75777F),
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 2,
-                              ), // Warna biru tebal saat aktif
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 1,
-                              ), // Warna merah saat error
-                            ),
-                            errorStyle: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                          items:
-                              [
-                                '',
-                                'Kuliner',
-                                'Tagihan Listrik',
-                                'Belanja Pokok',
-                                'E-commerce',
-                                'Tagihan Internet',
-                                'Biaya Pendidikan',
-                              ].map((String val) {
-                                return DropdownMenuItem<String>(
-                                  value: val,
-                                  child: Text(val),
-                                );
-                              }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              selected = val;
-                            });
-                          },
-                          // Tambahkan validator di sini
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Tentukan kategori transaksi !';
-                            }
-                            return null;
-                          },
-                        ),
-
-                        SizedBox(height: 24),
-                        Text(
-                          "Unggah Struk Belanja/Barang (Opsional)",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF44474E),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () {
-                            _showImageSourceBottomSheet(context);
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            height: 105,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: const Color(0xFFE0E3E6),
-                              ),
-                              image: _imageFile != null
-                                  ? DecorationImage(
-                                      image: FileImage(_imageFile!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
-                            ),
-                            child: _imageFile == null
-                                ? const Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.camera_alt_outlined,
-                                          size: 48,
-                                          color: Colors.grey,
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Ketuk untuk upload struk belanja',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        Text("Catatan/Deskripsi"),
-                        SizedBox(height: 4),
-                        TextFormField(
-                          // controller: _keteranganController,
-                          keyboardType: TextInputType
-                              .multiline, // Untuk mengaktifkan tombol 'Enter' pada keyboard HP
-                          minLines: 3, //(tinggi awal kotak)
-                          maxLines:
-                              5, //Batas baris max sebelum kotak bisa di-scroll
-
-                          decoration: InputDecoration(
-                            labelText: 'Keterangan / Catatan',
-                            hintText:
-                                'Tulis detail catatan atau deskripsi di sini...',
-                            hintStyle: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 16,
-                            ),
-
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFE0E3E6),
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 2,
-                              ),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 1,
-                              ),
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7),
-                              borderSide: const BorderSide(
-                                color: Colors.red,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              elevation: 2,
-                            ),
-                            onPressed: () {
-                              // 1. Validasi komponen berbasis form (Dropdown dan Text Area)
-                              if (_formKey.currentState!.validate()) {
-                                // 2. Jika semua validasi lolos, jalankan fungsi simpan data
-                                // _prosesSimpanTransaksi();
-                              }
-                            },
-                            child: const Text(
-                              "SIMPAN TRANSAKSI",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                letterSpacing:
-                                    1.1, // Memberikan sedikit jarak antar huruf
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                const Text(
+                  "Nominal Transaksi",
+                  style: TextStyle(
+                    color: Color(0xFF44474E),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nominalController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    hintText: "100.000",
+                    hintStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Color(0xFF9E9E9E),
                     ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(color: Color(0xFFE0E3E6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFE0E0E0),
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Color(0XFF0050CC),
+                        width: 2.0,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Nominal transaksi harus di isi !";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Kategori",
+                  style: TextStyle(
+                    color: Color(0xFF44474E),
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  initialValue: selected,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(color: Color(0xFFE0E3E6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFE0E0E0),
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Color(0XFF0050CC),
+                        width: 2.0,
+                      ),
+                    ),
+
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 1.5,
+                      ),
+                    ),
+
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    errorStyle: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                  items:
+                      [
+                        'Pilih Kategori',
+                        'Belanja Bulanan',
+                        'E-Commerce & Belanja',
+                        'Hiburan & Gaya Hidup',
+                        'Internet & Komunikasi',
+                        'Kesehatan',
+                        'Kuliner & Makanan',
+                        'Pendidikan',
+                        'Sosial & Donasi',
+                        'Tagihan Rumah Tangga',
+                        'Transportasi',
+                        'Lain-lain',
+                      ].map((String val) {
+                        return DropdownMenuItem<String>(
+                          value: val == 'Pilih Kategori' ? null : val,
+                          child: Text(
+                            val,
+                            style: TextStyle(
+                              color: val == 'Pilih Kategori'
+                                  ? Colors.grey
+                                  : const Color(0xFF181C1E),
+                              fontSize: 14,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      selected = val;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value == 'Pilih Kategori') {
+                      return 'Tentukan kategori transaksi !';
+                    }
+                    return null;
+                  },
+                ),
+
+                SizedBox(height: 16),
+                Text("Catatan/Deskripsi"),
+                SizedBox(height: 4),
+                TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  minLines: 3,
+                  maxLines: 5,
+
+                  decoration: InputDecoration(
+                    hintText: 'Tulis detail catatan atau deskripsi di sini...',
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
+                    ),
+
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFE0E3E6),
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(
+                        color: Colors.blue,
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(color: Colors.red, width: 1),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      borderSide: const BorderSide(color: Colors.red, width: 2),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                const Text(
+                  "Bukti Struk Belanja",
+                  style: TextStyle(color: Color(0xFF44474E), fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () => _showImageSourceBottomSheet(context),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F4F7),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFE0E3E6)),
+                    ),
+                    child: _imageFile != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(_imageFile!, fit: BoxFit.cover),
+                          )
+                        : const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_a_photo_outlined,
+                                color: Color(0XFF0050CC),
+                                size: 32,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Unggah Foto Struk",
+                                style: TextStyle(color: Color(0XFF0050CC)),
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0XFF0050CC),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Jalankan logika penyimpanan data transaksi disini
+                    }
+                  },
+                  child: const Text(
+                    "Simpan Transaksi",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

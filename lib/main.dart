@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projek_sintakqu_app/database/db_helper.dart';
 import 'package:projek_sintakqu_app/login.dart';
+import 'package:projek_sintakqu_app/splash_screen.dart';
 import 'package:projek_sintakqu_app/view/home/index_home.dart';
 
 void main() {
@@ -10,26 +11,34 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // Fungsi inisialisasi untuk memastikan SplashScreen berdurasi minimal 2 detik
+  Future<bool> _inisialisasiAplikasi() async {
+    final hasilCekLogin = DbHelper().cekStatusLogin();
+    final jedaWaktu = Future.delayed(const Duration(seconds: 2));
+    final hasil = await Future.wait([hasilCekLogin, jedaWaktu]);
+
+    // Kembalikan hasil status login (elemen pertama dari hasil Future.wait)
+    return hasil[0] as bool;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SintakQu',
+      debugShowCheckedModeBanner: false, // Menghilangkan banner debug opsional
       home: FutureBuilder<bool>(
-        future: DbHelper().cekStatusLogin(), // Memanggil fungsi auto-redirect
+        future: _inisialisasiAplikasi(),
         builder: (context, snapshot) {
-          // Menampilkan loading screen saat database sedang memeriksa status
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
+            return const SplashScreen();
           }
 
-          // Jika hasil pemeriksaan bernilai true, langsung buka IndexHome
+          // Jika data berhasil diambil dan status login bernilai true
           if (snapshot.hasData && snapshot.data == true) {
             return const IndexHome();
           }
 
-          // Jika false atau belum pernah login, arahkan ke halaman Login biasa
+          // Jika belum login atau terjadi error, arahkan ke Login screen
           return const Login();
         },
       ),
