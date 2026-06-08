@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
+import 'package:projek_sintakqu_app/model/transaksi_model.dart';
 
 class Transaksi extends StatefulWidget {
   const Transaksi({super.key});
@@ -13,9 +17,9 @@ class Transaksi extends StatefulWidget {
 
 class _TransaksiState extends State<Transaksi> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nominalController = TextEditingController();
+  final _nominalController = TextEditingController();
+  final _catatanController = TextEditingController();
   String? selected;
-
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -34,6 +38,54 @@ class _TransaksiState extends State<Transaksi> {
     } catch (e) {
       print("Error mengambil gambar: $e");
     }
+  }
+  // save transaksi action
+
+  Future<void> _simpanTransaksi() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    String? pathGambar;
+
+    //jika user mengupload struk/gambar
+    if (_imageFile != null) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final namaFile = p.basename(_imageFile!.path);
+      final fileBaru = await _imageFile!.copy('${appDir.path}/$namaFile');
+      pathGambar = fileBaru.path;
+    }
+
+    // initsialisasi objek model transaksi
+
+    final buatTransaksi = TransaksiModel(
+      nilaiTransaksi: double.parse(_nominalController.text),
+      kategoriTrans: selected ?? 'Pilih Kategori',
+      keterangan: _catatanController.text,
+      fotoStruk: pathGambar,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    await DbHelper().tambahTransaksi(buatTransaksi.toMap());
+
+    //menghindari aplikasi crash jika user tiba-tiba keluar sedangkan proses penyimpanan belum selesai.
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Data Transaksi Berhasi Disimpan!'),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    setState(() {
+      _nominalController.clear();
+      _catatanController.clear();
+      selected = null;
+      _imageFile = null;
+      pathGambar = null;
+    });
   }
 
   void _showImageSourceBottomSheet(BuildContext context) {
@@ -98,12 +150,6 @@ class _TransaksiState extends State<Transaksi> {
   }
 
   @override
-  void dispose() {
-    _nominalController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7FAFD),
@@ -121,7 +167,7 @@ class _TransaksiState extends State<Transaksi> {
               ),
             ),
             Spacer(),
-            Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
+            Icon(Icons.list_alt, color: Color(0xFF0050CC)),
           ],
         ),
         bottom: PreferredSize(
@@ -310,6 +356,7 @@ class _TransaksiState extends State<Transaksi> {
                 Text("Catatan/Deskripsi"),
                 SizedBox(height: 4),
                 TextFormField(
+                  controller: _catatanController,
                   keyboardType: TextInputType.multiline,
                   minLines: 3,
                   maxLines: 5,
@@ -400,9 +447,7 @@ class _TransaksiState extends State<Transaksi> {
                     ),
                   ),
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Jalankan logika penyimpanan data transaksi disini
-                    }
+                    _simpanTransaksi();
                   },
                   child: const Text(
                     "Simpan Transaksi",
