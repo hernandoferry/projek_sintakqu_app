@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-// 1. PENTING: Ubah sesuai lokasi/nama file model transaksi Anda yang sebenarnya
 import 'package:projek_sintakqu_app/model/transaksi_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -102,12 +102,25 @@ class DbHelper {
   }
 
   // 4. UPDATE (Perbarui Data Transaksi)
-  Future<int> ubahTransaksi(int id, Map<String, dynamic> data) async {
+  Future<int> updateTransaksi(
+    int id,
+    String keterangan,
+    String kategori,
+    double nominal,
+    String? gambarPath,
+  ) async {
     final db = await database;
-
-    data['updated_at'] = DateTime.now().toIso8601String();
-
-    return await db.update('transaksi', data, where: 'id = ?', whereArgs: [id]);
+    return await db.update(
+      'transaksi',
+      {
+        'keterangan': keterangan,
+        'kategori': kategori,
+        'nominal': nominal,
+        'gambar': gambarPath,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   // 5. DELETE (Hapus Data Transaksi)
@@ -226,12 +239,16 @@ class DbHelper {
     double bulanIni = 0;
 
     for (var row in hasil) {
-      if (row['periode'] == 'hari_ini')
+      if (row['periode'] == 'hari_ini') {
         hariIni = double.parse(row['total'].toString());
-      if (row['periode'] == 'minggu_ini')
+      }
+
+      if (row['periode'] == 'minggu_ini') {
         mingguIni = double.parse(row['total'].toString());
-      if (row['periode'] == 'bulan_ini')
+      }
+      if (row['periode'] == 'bulan_ini') {
         bulanIni = double.parse(row['total'].toString());
+      }
     }
 
     return {
@@ -399,6 +416,21 @@ class DbHelper {
     }
 
     await batch.commit(noResult: true);
-    print("Berhasil memasukkan 20 data Mei dengan kategori baru!");
+    Text(
+      "Berhasil memasukkan 20 data Mei dengan kategori baru! jangal lupa di hapus fungis ini!",
+    );
+  }
+
+  //laporan pencarian transaksi berdasarkan input tanggal
+  Future<List<Map<String, dynamic>>> cariTransaksiMulaiTanggal(
+    String pilihTanggal,
+  ) async {
+    final db = await database;
+    return await db.query(
+      'transaksi',
+      where: "date(created_at / 1000, 'unixepoch', 'localtime') = ?",
+      whereArgs: [pilihTanggal],
+      orderBy: 'created_at DESC', // Urutkan dari yang paling baru
+    );
   }
 }

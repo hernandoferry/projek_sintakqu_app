@@ -9,7 +9,7 @@ class IndexHome extends StatefulWidget {
   const IndexHome({super.key});
 
   @override
-  _IndexHomeState createState() => _IndexHomeState();
+  State<IndexHome> createState() => _IndexHomeState();
 }
 
 class _IndexHomeState extends State<IndexHome> {

@@ -7,7 +7,7 @@ class Keamanan extends StatefulWidget {
   const Keamanan({super.key});
 
   @override
-  _KeamananState createState() => _KeamananState();
+  State<Keamanan> createState() => _KeamananState();
 }
 
 class _KeamananState extends State<Keamanan> {
@@ -123,9 +123,7 @@ class _KeamananState extends State<Keamanan> {
                     "Ganti password akun kamu secara berkala",
                   ),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    print("Menu Ganti Password diklik");
-                  },
+                  onTap: () {},
                 ),
               ),
             ),
@@ -166,9 +164,7 @@ class _KeamananState extends State<Keamanan> {
                     "Amankan akun dengan kode verifikasi HP",
                   ),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    print("Menu 2FA diklik");
-                  },
+                  onTap: () {},
                 ),
               ),
             ),

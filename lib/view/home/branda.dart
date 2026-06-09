@@ -7,12 +7,12 @@ class Branda extends StatefulWidget {
   const Branda({super.key});
 
   @override
-  _BrandaState createState() => _BrandaState();
+  State<Branda> createState() => _BrandaState();
 }
 
 class _BrandaState extends State<Branda> {
   late Future<Map<String, dynamic>?> _ambilDataUserLogin;
-  late Future<List<TransaksiModel>> _ambilLastPengeluaran;
+  // late Future<List<TransaksiModel>> _ambilLastPengeluaran;
   late Future<Map<String, double>> _ambilRekapPengeluaran;
   late Future<List<Map<String, dynamic>>> _ambilStatistikChart;
   bool _nominalPengeluaran = true;
@@ -42,7 +42,7 @@ class _BrandaState extends State<Branda> {
 
   void tampilkanPengeluaranTerakhir(BuildContext context) async {
     final dbData = await DbHelper().getLastDuapuluhPengeluaranTerakhir();
-
+    if (!context.mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -173,7 +173,6 @@ class _BrandaState extends State<Branda> {
   void initState() {
     super.initState();
     _ambilDataUserLogin = DbHelper().getDataLoggeduser();
-    _ambilLastPengeluaran = DbHelper().getDuaPengeluaranTerakhir();
     _ambilRekapPengeluaran = DbHelper().ambilRekapPengeluaran();
     _ambilStatistikChart = DbHelper().ambilStatistik7Hari();
   }
@@ -309,7 +308,7 @@ class _BrandaState extends State<Branda> {
                                       fontWeight: FontWeight.w500,
                                       color: const Color(
                                         0xFFFFFFFF,
-                                      ).withOpacity(0.6),
+                                      ).withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ),
@@ -396,7 +395,7 @@ class _BrandaState extends State<Branda> {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 4),
@@ -445,7 +444,7 @@ class _BrandaState extends State<Branda> {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 4),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
+import 'package:projek_sintakqu_app/helpers/edit_transaksi_helper.dart';
+import 'package:projek_sintakqu_app/helpers/state_pencarian_helper.dart';
 import 'package:projek_sintakqu_app/view/laporan/bulanan_laporan.dart';
 import 'package:projek_sintakqu_app/view/laporan/tahunan_laporan.dart';
 
@@ -7,26 +10,45 @@ class IndexLaporan extends StatefulWidget {
   const IndexLaporan({super.key});
 
   @override
-  _IndexLaporanState createState() => _IndexLaporanState();
+  State<IndexLaporan> createState() => _IndexLaporanState();
 }
 
 class _IndexLaporanState extends State<IndexLaporan> {
+  // 1. Inisialisasi controller dan penampung data di atas override build
   final TextEditingController _dateController = TextEditingController();
+  List<Map<String, dynamic>> _hasilPencarian = [];
 
-  // Fungsi untuk menampilkan kalender popup
+  // 2. Fungsi saat TextField di-tap
   Future<void> _pilihTanggal(BuildContext context) async {
-    final DateTime? tanggalDipilih = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(), // Tanggal awal saat kalender dibuka
-      firstDate: DateTime(2000), // Batas minimum tahun yang bisa dipilih
-      lastDate: DateTime(2100), // Batas maksimum tahun yang bisa dipilih
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
     );
 
-    if (tanggalDipilih != null) {
+    if (picked != null) {
+      // Ubah tanggal ke format SQLite (YYYY-MM-DD)
+      String formatDb = DateFormat('yyyy-MM-dd').format(picked);
+
+      // Ubah tanggal ke format UI TextField (DD-MM-YYYY)
+      String formatUi = DateFormat('dd-MM-yyyy').format(picked);
+
+      // Ambil data dari database Sqflite
+      final data = await DbHelper().cariTransaksiMulaiTanggal(formatDb);
+
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(tanggalDipilih);
+        _dateController.text = formatUi;
+        // Menyimpan hasil data untuk ditampilkan di ListView
+        _hasilPencarian = data;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
   }
 
   @override
@@ -158,15 +180,28 @@ class _IndexLaporanState extends State<IndexLaporan> {
                       filled: true,
                       fillColor: const Color(0xFFF1F4F7),
                       hintText: "DD-MM-YYYY",
-                      prefixIcon: Icon(Icons.calendar_today),
+                      prefixIcon: const Icon(Icons.calendar_today),
+
+                      suffixIcon: _dateController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.cancel,
+                                color: Color(0xFF8E8E93),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _dateController.clear();
+                                  _hasilPencarian.clear();
+                                });
+                              },
+                            )
+                          : null,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFFC5C6CF),
-                        ), // Warna border baru
+                        borderSide: const BorderSide(color: Color(0xFFC5C6CF)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -177,65 +212,276 @@ class _IndexLaporanState extends State<IndexLaporan> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0XFF0050CC),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search, color: Color(0XFFFFFFFF)),
-                        SizedBox(width: 4.5),
-                        Text(
-                          "Cari Laporan",
-                          style: TextStyle(
-                            color: Color(0XFFFFFFFF),
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
           SizedBox(height: 24),
-          SizedBox(
-            width: 96,
-            height: 96,
-            child: CircleAvatar(
-              backgroundColor: const Color(0xFFEBEEF1),
-              radius: 48,
-              child: const Icon(
-                Icons.event_busy_outlined,
-                size: 40,
-                color: Color(0xFF75777F),
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            "Belum Ada Data ",
-            style: TextStyle(color: Color(0XFF181C1E), fontSize: 16),
-          ),
-          SizedBox(height: 4),
-          Padding(
-            padding: EdgeInsets.only(left: 48, right: 48, bottom: 48),
-            child: Text(
-              "Pilih tanggal untuk melihat laporan harian transaksi anda secara rinci.",
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: Intl.defaultLocale,
-                color: Color(0XFF44474E),
-              ),
-              textAlign: TextAlign.center,
-            ),
+          Expanded(
+            child: _hasilPencarian.isEmpty
+                ? StatePencarianHelper(
+                    belumCari: _dateController
+                        .text
+                        .isEmpty, // Memperbaiki kondisi helper secara dinamis
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.only(top: 16, bottom: 16),
+                    itemCount: _hasilPencarian.length,
+                    itemBuilder: (context, index) {
+                      final transaksi = _hasilPencarian[index];
+                      final bool isPengeluaran =
+                          transaksi['jenis'] == 'pengeluaran';
+                      final double nominal =
+                          double.tryParse(transaksi['nominal'].toString()) ??
+                          0.0;
+
+                      // Format angka nominal menjadi Rp 150.000
+                      final String formatUang = nominal
+                          .toStringAsFixed(0)
+                          .replaceAllMapped(
+                            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                            (Match m) => '${m[1]}.',
+                          );
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFEBEBF0)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: isPengeluaran
+                                    ? const Color(0xFFFFEBEE)
+                                    : const Color(0xFFE8F5E9),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                isPengeluaran
+                                    ? Icons.arrow_outward
+                                    : Icons.south_west,
+                                color: isPengeluaran
+                                    ? Colors.red
+                                    : Colors.green,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    transaksi['keterangan'] ??
+                                        'Tanpa Keterangan',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF1C1C1E),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    transaksi['kategori'] ?? 'Umum',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF8E8E93),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // ✨ KELOMPOK NOMINAL & TOMBOL AKSI
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Nominal Transaksi (Warna diubah dinamis: Merah untuk pengeluaran, Hijau untuk pemasukan)
+                                Text(
+                                  "${isPengeluaran ? '-' : '-'} Rp $formatUang",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 12,
+                                ), // Jarak ke tombol aksi
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    color: Colors.blue,
+                                    size: 18,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16),
+                                        ),
+                                      ),
+
+                                      builder: (context) => EditTransaksiHelper(
+                                        transaksi: transaksi,
+                                        onSaved: () async {
+                                          // Fungsi penyegaran otomatis setelah data disimpan
+                                          String formatDb =
+                                              DateFormat('yyyy-MM-dd').format(
+                                                DateFormat(
+                                                  'dd-MM-yyyy',
+                                                ).parse(_dateController.text),
+                                              );
+
+                                          final dataTerbaru = await DbHelper()
+                                              .cariTransaksiMulaiTanggal(
+                                                formatDb,
+                                              );
+
+                                          setState(() {
+                                            _hasilPencarian = dataTerbaru;
+                                          });
+                                          if (!context.mounted) return;
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Transaksi berhasil diperbarui",
+                                              ),
+                                              backgroundColor: Colors.blue,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red,
+                                    size: 18,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    // Tampilkan dialog konfirmasi
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext dialogContext) {
+                                        return AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
+                                          ),
+                                          title: const Text(
+                                            "Hapus Transaksi?",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          content: const Text(
+                                            "Apakah Anda yakin ingin menghapus data transaksi ini secara permanent?",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xFF4A4A4A),
+                                            ),
+                                          ),
+                                          actions: [
+                                            // Tombol Batal
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(dialogContext);
+                                              },
+                                              child: const Text(
+                                                "Batal",
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+
+                                            // Tombol Konfirmasi Oke/Hapus
+                                            TextButton(
+                                              onPressed: () async {
+                                                Navigator.pop(dialogContext);
+
+                                                // Pastikan nama kolom 'id' sesuai dengan primary key di database Anda
+                                                await DbHelper().hapusTransaksi(
+                                                  transaksi['id'],
+                                                );
+
+                                                String formatDb =
+                                                    DateFormat(
+                                                      'yyyy-MM-dd',
+                                                    ).format(
+                                                      DateFormat(
+                                                        'dd-MM-yyyy',
+                                                      ).parse(
+                                                        _dateController.text,
+                                                      ),
+                                                    );
+                                                final dataTerbaru =
+                                                    await DbHelper()
+                                                        .cariTransaksiMulaiTanggal(
+                                                          formatDb,
+                                                        );
+
+                                                setState(() {
+                                                  _hasilPencarian = dataTerbaru;
+                                                });
+                                                if (!context.mounted) return;
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      "Transaksi berhasil dihapus",
+                                                    ),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    duration: Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Hapus",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

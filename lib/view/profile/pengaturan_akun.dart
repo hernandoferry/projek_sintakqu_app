@@ -4,7 +4,7 @@ class PengaturanAkun extends StatefulWidget {
   const PengaturanAkun({super.key});
 
   @override
-  _PengaturanAkunState createState() => _PengaturanAkunState();
+  State<PengaturanAkun> createState() => _PengaturanAkunState();
 }
 
 class _PengaturanAkunState extends State<PengaturanAkun> {
@@ -77,9 +77,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
                               labelText: 'Nama Lengkap',
                               border: const OutlineInputBorder(),
                               suffixIcon: TextButton(
-                                onPressed: () {
-                                  print("Tombol Edit ditekan");
-                                },
+                                onPressed: () {},
                                 child: const Text(
                                   'Edit',
                                   style: TextStyle(
@@ -102,9 +100,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
                               labelText: 'Alamat e-mail',
                               border: const OutlineInputBorder(),
                               suffixIcon: TextButton(
-                                onPressed: () {
-                                  print("Tombol Edit ditekan");
-                                },
+                                onPressed: () {},
                                 child: const Text(
                                   'Edit',
                                   style: TextStyle(
@@ -127,9 +123,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
                               labelText: 'No.Hp',
                               border: const OutlineInputBorder(),
                               suffixIcon: TextButton(
-                                onPressed: () {
-                                  print("Tombol Edit ditekan");
-                                },
+                                onPressed: () {},
                                 child: const Text(
                                   'Edit',
                                   style: TextStyle(
