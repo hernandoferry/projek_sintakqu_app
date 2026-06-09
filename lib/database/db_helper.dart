@@ -256,4 +256,149 @@ class DbHelper {
     ORDER BY tanggal ASC
   ''');
   }
+
+  // laporan per bulan get total pengeluaran
+  Future<double> getTotalPengeluaranBulan(int bulan) async {
+    final db = await database;
+    final String tahunIni = DateTime.now().year.toString();
+    final String formatBulan = bulan.toString().padLeft(
+      2,
+      '0',
+    ); // Ubah 5 jadi '05'
+
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+      '''
+    SELECT SUM(nominal) as total 
+    FROM transaksi 
+    WHERE strftime('%Y', datetime(created_at / 1000, 'unixepoch', 'localtime')) = ?
+      AND strftime('%m', datetime(created_at / 1000, 'unixepoch', 'localtime')) = ?
+  ''',
+      [tahunIni, formatBulan],
+    );
+
+    if (result.isNotEmpty && result.first['total'] != null) {
+      return (result.first['total'] as num).toDouble();
+    }
+    return 0.0;
+  }
+
+  // laporan bulanan get total pengeluaran per bulan per kategori
+  Future<List<Map<String, dynamic>>> getPengeluaranPerKategoriBulan(
+    int bulan,
+  ) async {
+    final db = await database;
+    final String tahunIni = DateTime.now().year.toString();
+    final String formatBulan = bulan.toString().padLeft(2, '0');
+
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+      '''
+    SELECT kategori, SUM(nominal) as total 
+    FROM transaksi 
+    WHERE strftime('%Y', datetime(created_at / 1000, 'unixepoch', 'localtime')) = ?
+      AND strftime('%m', datetime(created_at / 1000, 'unixepoch', 'localtime')) = ?
+    GROUP BY kategori
+    ORDER BY total DESC
+  ''',
+      [tahunIni, formatBulan],
+    );
+
+    return result;
+  }
+
+  // laporan bulanan get trend pengeluaran per bulan
+  Future<List<Map<String, dynamic>>> getTrendPengeluaranHanyaYangAda() async {
+    final db = await database;
+    final String tahunIni = DateTime.now().year.toString();
+
+    // Query ini hanya mengambil bulan yang memiliki transaksi
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+      '''
+    SELECT 
+      strftime('%m', datetime(created_at / 1000, 'unixepoch', 'localtime')) as bulan_angka,
+      SUM(nominal) as total
+    FROM transaksi
+    WHERE strftime('%Y', datetime(created_at / 1000, 'unixepoch', 'localtime')) = ?
+    GROUP BY bulan_angka
+    ORDER BY bulan_angka ASC
+  ''',
+      [tahunIni],
+    );
+
+    return result;
+    // Output hanya bulan yang ada data, misal: [{'bulan_angka': '06', 'total': 150000.0}]
+  }
+
+  // generator untuk membuat data dummy
+  Future<void> insert20DataDummyMei() async {
+    final db = await database;
+
+    // 1. DAFTAR KATEGORI SESUAI PERMINTAAN ANDA
+    final List<String> kategoriList = [
+      'Belanja Bulanan',
+      'E-Commerce & Belanja',
+      'Hiburan & Gaya Hidup',
+      'Internet & Komunikasi',
+      'Kesehatan',
+      'Kuliner & Makanan',
+      'Pendidikan',
+      'Sosial & Donasi',
+      'Tagihan Rumah Tangga',
+      'Transportasi',
+      'Lain-lain',
+    ];
+
+    // 2. KETERANGAN ACAK YANG COCOK DENGAN KATEGORI DI ATAS
+    final List<String> keteranganList = [
+      'Beli sembako supermarket',
+      'Belanja baju di online shop',
+      'Nonton bioskop & jajan',
+      'Beli paket internet bulanan',
+      'Beli obat dan vitamin',
+      'Makan siang nasi padang',
+      'Beli buku cetak kuliah',
+      'Infaq dan sedekah jumat',
+      'Bayar tagihan listrik air',
+      'Isi saldo e-toll dan bensin',
+      'Biaya admin dan parkir',
+    ];
+
+    final int tahunIni = DateTime.now().year;
+    final batch = db.batch();
+
+    for (int i = 1; i <= 20; i++) {
+      // Membagi transaksi merata di sepanjang bulan Mei (tanggal 1 sampai 28)
+      int tanggalAcak = (i % 28) + 1;
+      int jamAcak = (i * 3) % 24;
+      int menitAcak = (i * 7) % 60;
+
+      DateTime tanggalMei = DateTime(
+        tahunIni,
+        5,
+        tanggalAcak,
+        jamAcak,
+        menitAcak,
+      );
+      int timestampMilidetik = tanggalMei.millisecondsSinceEpoch;
+
+      // Membuat nominal acak kelipatan Rp 5.000 (Rentang Rp 15.000 - Rp 350.000)
+      double nominalAcak = ((i * 17) % 70 + 3) * 5000;
+
+      // Mengambil indeks secara dinamis agar semua kategori kebagian data
+      String kategoriPilihan = kategoriList[i % kategoriList.length];
+      String keteranganPilihan =
+          "${keteranganList[i % keteranganList.length]} ke-$i";
+
+      batch.insert('transaksi', {
+        'nominal': nominalAcak,
+        'kategori': kategoriPilihan,
+        'keterangan': keteranganPilihan,
+        'gambar': null,
+        'created_at': timestampMilidetik,
+        'updated_at': timestampMilidetik,
+      });
+    }
+
+    await batch.commit(noResult: true);
+    print("Berhasil memasukkan 20 data Mei dengan kategori baru!");
+  }
 }

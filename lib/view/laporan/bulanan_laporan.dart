@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/view/laporan/detail_kategori_laporan.dart';
+import 'package:projek_sintakqu_app/database/db_helper.dart';
 
 class BulananLaporan extends StatefulWidget {
   const BulananLaporan({super.key});
@@ -10,54 +10,10 @@ class BulananLaporan extends StatefulWidget {
 }
 
 class _BulananLaporanState extends State<BulananLaporan> {
-  // dummy data barchart pengeluaran bulanan
-  final List<double> dataPengeluaran = [
-    45.9, // Januari
-    60.0, // Februari
-    35.0, // Maret
-    80.0, // April
-    99.0, // Mei
-    10.0, //juni
-  ];
-
-  // dummy data untuk kategori pengeluaran bulanan
-  final List<Map<String, dynamic>> dataKategori = [
-    {
-      "nama": "Kuliner",
-      "nominal": "Rp 500.000",
-      "icon": Icons.restaurant,
-      "progress": 0.5,
-    },
-    {
-      "nama": "Transportasi",
-      "nominal": "Rp 350.000",
-      "icon": Icons.directions_car,
-      "progress": 0.35,
-    },
-    {
-      "nama": "Belanja",
-      "nominal": "Rp 1.200.000",
-      "icon": Icons.shopping_bag,
-      "progress": 0.85,
-    },
-    {
-      "nama": "Tagihan & Listrik",
-      "nominal": "Rp 850.000",
-      "icon": Icons.electric_bolt,
-      "progress": 0.6,
-    },
-    {
-      "nama": "Hiburan",
-      "nominal": "Rp 200.000",
-      "icon": Icons.movie,
-      "progress": 0.2,
-    },
-  ];
-
   // set controller untuk mengendalikan posisi scroll nama bulan
   final ScrollController _scrollController = ScrollController();
 
-  // set nama bulan
+  // set nama bulan lengkap
   final List<String> semuaBulan = [
     "Januari",
     "Februari",
@@ -110,6 +66,26 @@ class _BulananLaporanState extends State<BulananLaporan> {
 
   @override
   Widget build(BuildContext context) {
+    // Variabel helper untuk visual grafik di sumbu X dan penentuan highlight warna batang aktif
+    final List<String> namaBulanSingkat = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Ags',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
+    final String bulanSekarangString = DateTime.now().month.toString().padLeft(
+      2,
+      '0',
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Laporan Bulanan"),
@@ -123,10 +99,12 @@ class _BulananLaporanState extends State<BulananLaporan> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24),
+
+            // 1. HORIZONTAL MONTH SELECTOR
             Padding(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: SizedBox(
-                height: 30,
+                height: 35,
                 child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
@@ -144,7 +122,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                         margin: const EdgeInsets.symmetric(horizontal: 8),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 4,
+                          vertical: 6,
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
@@ -160,6 +138,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                   ? Colors.white
                                   : const Color(0xFF212121),
                               fontWeight: FontWeight.bold,
+                              fontSize: 13,
                             ),
                           ),
                         ),
@@ -172,76 +151,86 @@ class _BulananLaporanState extends State<BulananLaporan> {
 
             const SizedBox(height: 16),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0050CC),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "TOTAL PENGELUARAN BULAN INI",
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
+            // 2. CARD TOTAL PENGELUARAN DINAMIS FROM DATABASE
+            FutureBuilder<double>(
+              future: DbHelper().getTotalPengeluaranBulan(bulanTerpilih + 1),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      "Rp 99.000.000",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0XFFFFFFFF),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
-                          color: Color(0XFFFFFFFF),
-                          fontSize: 12,
-                        ),
-                        children: [
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 4),
-                              child: Icon(
-                                Icons.trending_up,
-                                color: Color(0XFFE4D329),
-                                size: 14,
-                              ),
-                            ),
-                          ),
-                          TextSpan(
-                            text: "12% ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0XFFE4D329),
-                            ),
-                          ),
-                          TextSpan(
-                            text: "dari bulan lalu",
-                            style: TextStyle(color: Color(0XFFE4D329)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
+                  );
+                }
 
+                final totalPengeluaran = snapshot.data ?? 0.0;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0050CC),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "TOTAL PENGELUARAN BULAN INI",
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Rp ${totalPengeluaran.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0XFFFFFFFF),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+
+                        // PERBAIKAN: STRUKTUR RICHTEXT DIBAWAH INI SEKARANG SUDAH DITUTUP SEMPURNA
+                        RichText(
+                          text: const TextSpan(
+                            style: TextStyle(
+                              color: Color(0XFFFFFFFF),
+                              fontSize: 12,
+                            ),
+                            children: [
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                  child: Icon(
+                                    Icons.trending_up,
+                                    color: Color(0XFFE4D329),
+                                    size: 14,
+                                  ),
+                                ),
+                              ),
+                              TextSpan(
+                                text: "Terbaca otomatis dari database lokal",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 24),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -253,90 +242,139 @@ class _BulananLaporanState extends State<BulananLaporan> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+
+            // 3. BAR CHART DINAMIS (Aman dari Overflow dengan batasan Tinggi)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
-                height: 200,
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: 120,
-                    barTouchData: BarTouchData(
-                      enabled: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        getTooltipColor: (group) => Colors.amberAccent,
-                        tooltipBorderRadius: BorderRadius.circular(8),
-                        tooltipPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        tooltipMargin: 8,
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          return BarTooltipItem(
-                            "Rp ${rod.toY.toStringAsFixed(1)} Jt",
-                            const TextStyle(
-                              color: Color(0xFFFFFFFF),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                height: 180,
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: DbHelper().getTrendPengeluaranHanyaYangAda(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                    titlesData: FlTitlesData(
-                      leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            if (value.toInt() >= 0 &&
-                                value.toInt() < semuaBulan.length) {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  //tampilkan nama bulan 3 huruf aja
-                                  semuaBulan[value.toInt()].substring(0, 3),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
+                    final List<Map<String, dynamic>> dataList =
+                        snapshot.data ?? [];
+
+                    if (dataList.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Belum ada tren data transaksi di tahun ini.',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    }
+
+                    double tertinggi = 0.0;
+                    for (var row in dataList) {
+                      double total = (row['total'] as num).toDouble();
+                      if (total > tertinggi) tertinggi = total;
+                    }
+                    double dinamisMaxY = tertinggi == 0
+                        ? 100.0
+                        : tertinggi * 1.2;
+
+                    return BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: dinamisMaxY,
+                        barTouchData: BarTouchData(
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                            getTooltipColor: (group) => const Color(0xFF1A1A1A),
+                            tooltipBorderRadius: BorderRadius.circular(8),
+                            tooltipPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            tooltipMargin: 4,
+                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                              int nomorBulan = int.parse(
+                                dataList[group.x]['bulan_angka'].toString(),
+                              );
+                              String namaBulan =
+                                  namaBulanSingkat[nomorBulan - 1];
+                              String formatRupiah = rod.toY
+                                  .toStringAsFixed(0)
+                                  .replaceAllMapped(
+                                    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                    (Match m) => '${m[1]}.',
+                                  );
+                              return BarTooltipItem(
+                                "$namaBulan\nRp $formatRupiah",
+                                const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
                                 ),
                               );
-                            }
-                            return const Text('');
-                          },
-                        ),
-                      ),
-                    ),
-                    gridData: const FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    barGroups: List.generate(
-                      dataPengeluaran.length,
-                      (index) => BarChartGroupData(
-                        x: index,
-                        barRods: [
-                          BarChartRodData(
-                            toY: dataPengeluaran[index],
-                            color: index == bulanTerpilih
-                                ? const Color(0XFF0050CC)
-                                : const Color(0X4D0050CC),
-                            width: 18,
-                            borderRadius: BorderRadius.circular(4),
+                            },
                           ),
-                        ],
+                        ),
+                        titlesData: FlTitlesData(
+                          leftTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              // HAPUS parameter meta jika versi lama Anda menolaknya
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                int index = value.toInt();
+                                if (index >= 0 && index < dataList.length) {
+                                  int nomorBulan = int.parse(
+                                    dataList[index]['bulan_angka'].toString(),
+                                  );
+
+                                  // Gunakan Padding biasa sebagai pengganti SideTitleWidget
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 6.0),
+                                    child: Text(
+                                      namaBulanSingkat[nomorBulan - 1],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+                          ),
+                        ),
+                        gridData: const FlGridData(show: false),
+                        borderData: FlBorderData(show: false),
+                        barGroups: List.generate(dataList.length, (index) {
+                          final row = dataList[index];
+                          final total = (row['total'] as num).toDouble();
+                          final String bulanAngka = row['bulan_angka']
+                              .toString();
+                          return BarChartGroupData(
+                            x: index,
+                            barRods: [
+                              BarChartRodData(
+                                toY: total,
+                                color: bulanAngka == bulanSekarangString
+                                    ? const Color(0XFF0050CC)
+                                    : const Color(0X4D0050CC),
+                                width: 16,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ],
+                          );
+                        }),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -352,40 +390,81 @@ class _BulananLaporanState extends State<BulananLaporan> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: dataKategori.length,
-              itemBuilder: (context, index) {
-                final item = dataKategori[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailKategoriLaporan(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+            SizedBox(height: 4),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: DbHelper().getPengeluaranPerKategoriBulan(
+                bulanTerpilih + 1,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final List<Map<String, dynamic>> dataKategoriReal =
+                    snapshot.data ?? [];
+                if (dataKategoriReal.isEmpty) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text(
+                        'Tidak ada rincian pengeluaran kategori.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                }
+                double totalSemuaKategori = 0;
+                for (var item in dataKategoriReal) {
+                  totalSemuaKategori += (item['total'] as num).toDouble();
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: dataKategoriReal.length,
+                  itemBuilder: (context, index) {
+                    final item = dataKategoriReal[index];
+                    final String namaKategori = item['kategori'].toString();
+                    final double nominalReal = (item['total'] as num)
+                        .toDouble();
+                    double progressNilai = totalSemuaKategori > 0
+                        ? nominalReal / totalSemuaKategori
+                        : 0.0;
+                    String formatRupiah = nominalReal
+                        .toStringAsFixed(0)
+                        .replaceAllMapped(
+                          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                          (Match m) => '${m[1]}.',
+                        );
+                    IconData dapatkanIkonKategori(String kategori) {
+                      switch (kategori) {
+                        case 'Belanja Bulanan':
+                          return Icons.shopping_basket;
+                        case 'E-Commerce & Belanja':
+                          return Icons.shopping_bag;
+                        case 'Hiburan & Gaya Hidup':
+                          return Icons.movie;
+                        case 'Internet & Komunikasi':
+                          return Icons.language;
+                        case 'Kesehatan':
+                          return Icons.local_hospital;
+                        case 'Kuliner & Makanan':
+                          return Icons.restaurant;
+                        case 'Pendidikan':
+                          return Icons.school;
+                        case 'Sosial & Donasi':
+                          return Icons.volunteer_activism;
+                        case 'Tagihan Rumah Tangga':
+                          return Icons.electric_bolt;
+                        case 'Transportasi':
+                          return Icons.directions_car;
+                        default:
+                          return Icons.wallet;
+                      }
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
                       ),
                       child: Column(
                         children: [
@@ -395,7 +474,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                 radius: 24,
                                 backgroundColor: const Color(0XFF0050CC),
                                 child: Icon(
-                                  item["icon"],
+                                  dapatkanIkonKategori(namaKategori),
                                   color: const Color(0xFFFFFFFF),
                                   size: 24,
                                 ),
@@ -407,7 +486,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      item["nama"],
+                                      namaKategori,
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -415,7 +494,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                       ),
                                     ),
                                     Text(
-                                      item["nominal"],
+                                      "Rp $formatRupiah",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -431,18 +510,18 @@ class _BulananLaporanState extends State<BulananLaporan> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
-                              value: item["progress"],
+                              value: progressNilai,
                               minHeight: 8,
                               backgroundColor: const Color(0xFFEBEEF1),
                               valueColor: const AlwaysStoppedAnimation(
-                                Color(0X4D0050CC),
+                                Color(0XFF0050CC),
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
