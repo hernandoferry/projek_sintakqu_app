@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:projek_sintakqu_app/database/db_helper.dart';
+import 'package:projek_sintakqu_app/view/laporan/detail_kategori_laporan.dart';
 
 class BulananLaporan extends StatefulWidget {
   const BulananLaporan({super.key});
@@ -482,6 +483,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                           (Match m) => '${m[1]}.',
                         );
+
                     IconData dapatkanIkonKategori(String kategori) {
                       switch (kategori) {
                         case 'Belanja Bulanan':
@@ -509,64 +511,86 @@ class _BulananLaporanState extends State<BulananLaporan> {
                       }
                     }
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundColor: const Color(0XFF0050CC),
-                                child: Icon(
-                                  dapatkanIkonKategori(namaKategori),
-                                  color: const Color(0xFFFFFFFF),
-                                  size: 24,
-                                ),
+                    // ✨ DI SINI TEMPAT TERBAIK UNTUK MENAMBAHKAN INKWELL
+                    return Material(
+                      color: Colors
+                          .transparent, // Menjaga latar belakang widget tetap bersih
+                      child: InkWell(
+                        onTap: () {
+                          // Pindah ke halaman detail sambil membawa data kategori dan bulan terpilih
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailKategoriLaporan(
+                                namaKategori: namaKategori,
+                                bulanAngka: bulanTerpilih + 1,
+                                namaBulan: daftarBulanTersedia[bulanTerpilih],
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      namaKategori,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF212121),
-                                      ),
+                            ),
+                          );
+                        },
+                        splashColor: const Color(0XFF0050CC).withAlpha(30),
+                        highlightColor: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: const Color(0XFF0050CC),
+                                    child: Icon(
+                                      dapatkanIkonKategori(namaKategori),
+                                      color: const Color(0xFFFFFFFF),
+                                      size: 24,
                                     ),
-                                    Text(
-                                      "Rp $formatRupiah",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF0050CC),
-                                      ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          namaKategori,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF212121),
+                                          ),
+                                        ),
+                                        Text(
+                                          "Rp $formatRupiah",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF0050CC),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: progressNilai,
+                                  minHeight: 8,
+                                  backgroundColor: const Color(0xFFEBEEF1),
+                                  valueColor: const AlwaysStoppedAnimation(
+                                    Color(0XFF0050CC),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: progressNilai,
-                              minHeight: 8,
-                              backgroundColor: const Color(0xFFEBEEF1),
-                              valueColor: const AlwaysStoppedAnimation(
-                                Color(0XFF0050CC),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },

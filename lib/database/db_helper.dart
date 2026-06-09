@@ -433,4 +433,32 @@ class DbHelper {
       orderBy: 'created_at DESC', // Urutkan dari yang paling baru
     );
   }
+
+  //laporan bulanan ambil data transaksi per kategori
+  Future<List<Map<String, dynamic>>> getTransaksiDanTotalPerKategoriBulan(
+    String kategori,
+    int bulan,
+  ) async {
+    final db = await database;
+    int tahunSekarang = DateTime.now().year;
+
+    // Rentang waktu dalam bentuk timestamp milidetik (Epoch)
+    int epochAwal = DateTime(tahunSekarang, bulan, 1).millisecondsSinceEpoch;
+    int epochAkhir = DateTime(
+      tahunSekarang,
+      bulan + 1,
+      1,
+    ).subtract(const Duration(milliseconds: 1)).millisecondsSinceEpoch;
+
+    // Menggunakan Window Function (SUM OVER) untuk menghitung total langsung di SQLite
+    String query = '''
+    SELECT *, 
+    SUM(nominal) OVER() as total_pengeluaran_kategori
+    FROM transaksi
+    WHERE kategori = ? AND created_at >= ? AND created_at <= ?
+    ORDER BY created_at DESC
+  ''';
+
+    return await db.rawQuery(query, [kategori, epochAwal, epochAkhir]);
+  }
 }
