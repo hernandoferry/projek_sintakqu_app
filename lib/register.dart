@@ -290,18 +290,19 @@ class _RegisterState extends State<Register> {
 
       int hasil = await DbHelper().registrasiUser(dataRegistrasi);
 
-      Navigator.pop(context);
       if (hasil == -1) {
         _notifikasiPesan('Alamat Email ini sudah terdaftar!', Colors.red);
       } else if (hasil > 0) {
         _notifikasiPesan('Pendaftaran Berhasil! Silakan masuk.', Colors.green);
+
+        if (!mounted) return;
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Login()),
         );
       } else {
-        _notifikasiPesan('Pendaftaran gagal sistem error.', Colors.orange);
+        _notifikasiPesan('Pendaftaran gagal, sistem error.', Colors.orange);
       }
     }
   }
