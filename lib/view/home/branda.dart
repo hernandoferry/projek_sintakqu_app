@@ -256,7 +256,7 @@ class _BrandaState extends State<Branda> {
                       height: 165,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xFF001A41).withOpacity(0.1),
+                        color: const Color(0xFF001A41).withValues(alpha: 0.1),
                       ),
                       child: const Center(child: CircularProgressIndicator()),
                     ),
@@ -600,7 +600,7 @@ class _BrandaState extends State<Branda> {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -608,12 +608,17 @@ class _BrandaState extends State<Branda> {
                             ),
                             child: LineChart(
                               LineChartData(
+                                minX: 0,
+                                maxX: labelTanggal.isEmpty
+                                    ? 0
+                                    : (labelTanggal.length - 1).toDouble(),
+
                                 lineTouchData: LineTouchData(
                                   touchTooltipData: LineTouchTooltipData(
                                     getTooltipColor: (touchedSpot) =>
                                         const Color(
                                           0xFF001A41,
-                                        ).withOpacity(0.8),
+                                        ).withValues(alpha: 0.7),
                                     tooltipBorderRadius: BorderRadius.circular(
                                       8,
                                     ),
@@ -651,6 +656,7 @@ class _BrandaState extends State<Branda> {
                                   bottomTitles: AxisTitles(
                                     sideTitles: SideTitles(
                                       showTitles: true,
+                                      interval: 1,
                                       reservedSize: 30,
                                       getTitlesWidget: (value, meta) {
                                         int index = value.toInt();
@@ -720,7 +726,7 @@ class _BrandaState extends State<Branda> {
                                       show: true,
                                       color: const Color(
                                         0xFF0050CC,
-                                      ).withOpacity(0.08),
+                                      ).withValues(alpha: 0.3),
                                     ),
                                   ),
                                 ],

@@ -248,6 +248,50 @@ class _IndexProfileState extends State<IndexProfile> {
                   child: Row(
                     children: [
                       const CircleAvatar(
+                        backgroundColor: Color(0x1A0050CC),
+                        radius: 20,
+                        child: Icon(
+                          Icons.contact_support,
+                          color: Color(0xFF0050CC),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      TextButton(
+                        onPressed: () async {
+                          await DbHelper().insert20DataDummyMei();
+
+                          // 2. Tampilkan notifikasi kecil di layar jika berhasil
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                '20 Data Dummy Mei Berhasil Ditambahkan!',
+                              ),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "Insert Dummy Data",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF181C1E),
+                              ),
+                            ),
+                            SizedBox(width: 11),
+                            Icon(Icons.arrow_forward_ios),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
                         backgroundColor: Color(0x1ABA1A1A),
                         radius: 20,
                         child: Icon(Icons.logout, color: Color(0xFFBA1A1A)),
