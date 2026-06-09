@@ -8,7 +8,7 @@ class Login extends StatefulWidget {
   const Login({super.key});
 
   @override
-  _LoginState createState() => _LoginState();
+  State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
@@ -229,13 +229,10 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
-                            // 1. Validasi format input form terlebih dahulu
                             if (_formKey.currentState!.validate()) {
-                              // Ambil data teks dari controller
                               String emailInput = _emailController.text.trim();
                               String passwordInput = _passwordController.text;
 
-                              // Tampilkan loading indicator sederhana
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
@@ -245,25 +242,22 @@ class _LoginState extends State<Login> {
                               );
 
                               try {
-                                // 2. Panggil fungsi cek login dari DBHelper
                                 bool isLoginSukses = await DbHelper().cekLogin(
                                   emailInput,
                                   passwordInput,
                                 );
-
-                                // Tutup dialog loading
+                                if (!context.mounted) return;
                                 Navigator.pop(context);
 
-                                // 3. Cek hasil dari database
                                 if (isLoginSukses) {
-                                  // JIKA COCOK: Berikan notifikasi sukses dan pindah ke Home
+                                  if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Login Berhasil!'),
                                       backgroundColor: Colors.green,
                                     ),
                                   );
-
+                                  if (!context.mounted) return;
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
@@ -271,7 +265,7 @@ class _LoginState extends State<Login> {
                                     ),
                                   );
                                 } else {
-                                  // JIKA SALAH: Tampilkan pesan error akun tidak terdaftar
+                                  if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
@@ -282,7 +276,7 @@ class _LoginState extends State<Login> {
                                   );
                                 }
                               } catch (e) {
-                                // Tutup dialog loading jika terjadi error sistem/database
+                                if (!context.mounted) return;
                                 Navigator.pop(context);
 
                                 ScaffoldMessenger.of(context).showSnackBar(

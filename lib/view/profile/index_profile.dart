@@ -9,7 +9,7 @@ class IndexProfile extends StatefulWidget {
   const IndexProfile({super.key});
 
   @override
-  _IndexProfileState createState() => _IndexProfileState();
+  State<IndexProfile> createState() => _IndexProfileState();
 }
 
 class _IndexProfileState extends State<IndexProfile> {
@@ -260,7 +260,7 @@ class _IndexProfileState extends State<IndexProfile> {
                         onPressed: () async {
                           await DbHelper().insert20DataDummyMei();
 
-                          // 2. Tampilkan notifikasi kecil di layar jika berhasil
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(

@@ -7,7 +7,8 @@ class Register extends StatefulWidget {
   const Register({super.key});
 
   @override
-  _RegisterState createState() => _RegisterState();
+  State<Register> createState() => _RegisterState();
+  // _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
@@ -18,8 +19,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _noHpController = TextEditingController();
-  final TextEditingController _passwordController =
-      TextEditingController(); // Ditambahkan untuk password database
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -35,7 +35,6 @@ class _RegisterState extends State<Register> {
     return Scaffold(
       backgroundColor: const Color(0XFFF7FAFD),
       body: SingleChildScrollView(
-        // Ditambahkan agar layar aman bisa di-scroll saat mengetik
         child: Column(
           children: [
             const SizedBox(height: 80),
@@ -60,10 +59,7 @@ class _RegisterState extends State<Register> {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.only(
-                left: 30.5,
-                right: 30.5,
-              ), // Perbaikan dari EdgeInsetsGeometry
+              padding: EdgeInsets.only(left: 30.5, right: 30.5),
               child: Center(
                 child: Text(
                   'Gabung dengan SintakQu untuk memulai mengelola keuangan Keluarga anda',
@@ -74,20 +70,16 @@ class _RegisterState extends State<Register> {
             ),
             const SizedBox(height: 15),
 
-            // Container utama Form Box
             Container(
               width: 349,
-              // Hapus height kaku (379) agar kotak otomatis memanjang jika ada teks error dari validator
               decoration: BoxDecoration(
                 color: const Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(7),
                 border: Border.all(color: const Color(0xFFBFBBBB), width: 1.0),
               ),
-              padding: const EdgeInsets.only(
-                bottom: 16,
-              ), // Beri jarak bawah container
+              padding: const EdgeInsets.only(bottom: 16),
               child: Form(
-                key: _formKey, // Pasang Form Key disini
+                key: _formKey,
                 child: Column(
                   children: [
                     const Padding(
@@ -190,7 +182,6 @@ class _RegisterState extends State<Register> {
                     ),
                     const SizedBox(height: 10),
 
-                    // --- INPUT KATA SANDI (Tambahan Baru Agar Bisa Sinkron Saat Login) ---
                     const Padding(
                       padding: EdgeInsets.only(left: 10, bottom: 10),
                       child: Row(
@@ -225,7 +216,6 @@ class _RegisterState extends State<Register> {
                     ),
                     const SizedBox(height: 15),
 
-                    // --- TOMBOL DAFTAR ---
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: ElevatedButton(
@@ -249,8 +239,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     const SizedBox(height: 15),
-
-                    // --- TEKS LINK PINDAH KE LOGIN ---
                     RichText(
                       text: TextSpan(
                         style: const TextStyle(
@@ -291,7 +279,6 @@ class _RegisterState extends State<Register> {
 
   void _prosesDaftarUser() async {
     if (_formKey.currentState!.validate()) {
-      // Munculkan efek loading berputarshowDialog(context: context,barrierDismissible: false,builder: (context) => const Center(child: CircularProgressIndicator()),);
       Map<String, dynamic> dataRegistrasi = {
         'nama_lengkap': _namaController.text.trim(),
         'email': _emailController.text.trim(),
@@ -300,12 +287,15 @@ class _RegisterState extends State<Register> {
         'is_login': 0,
         'status': 'aktif',
       };
+
       int hasil = await DbHelper().registrasiUser(dataRegistrasi);
+
       Navigator.pop(context);
       if (hasil == -1) {
         _notifikasiPesan('Alamat Email ini sudah terdaftar!', Colors.red);
       } else if (hasil > 0) {
         _notifikasiPesan('Pendaftaran Berhasil! Silakan masuk.', Colors.green);
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Login()),

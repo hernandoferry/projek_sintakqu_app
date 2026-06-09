@@ -4,7 +4,7 @@ class DetailKategoriLaporan extends StatefulWidget {
   const DetailKategoriLaporan({super.key});
 
   @override
-  _DetailKategoriLaporanState createState() => _DetailKategoriLaporanState();
+  State<DetailKategoriLaporan> createState() => _DetailKategoriLaporanState();
 }
 
 class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
@@ -219,7 +219,7 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
+                          color: Colors.black.withValues(alpha: 0.03),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -245,7 +245,6 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  // Menggunakan Column baru agar teks Nama dan Tanggal tersusun bertingkat di sebelah kiri
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment
                                         .start, // Rata kiri rapi
@@ -258,18 +257,14 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                                           color: Color(0xFF212121),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 4,
-                                      ), // Jarak tipis ke teks tanggal
+                                      const SizedBox(height: 4),
                                       Text(
                                         // Mengambil data tanggal dari map dataKategori (atau berikan nilai default jika null)
                                         item["tanggal"] ?? "04 Juni 2026",
                                         style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal,
-                                          color: Color(
-                                            0xFF757575,
-                                          ), // Warna abu-abu halus untuk informasi tanggal
+                                          color: Color(0xFF757575),
                                         ),
                                       ),
                                     ],

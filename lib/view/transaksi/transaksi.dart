@@ -12,7 +12,8 @@ class Transaksi extends StatefulWidget {
   const Transaksi({super.key});
 
   @override
-  _TransaksiState createState() => _TransaksiState();
+  State<Transaksi> createState() => _TransaksiState();
+  // _TransaksiState createState() => _TransaksiState();
 }
 
 class _TransaksiState extends State<Transaksi> {
@@ -36,7 +37,7 @@ class _TransaksiState extends State<Transaksi> {
         });
       }
     } catch (e) {
-      print("Error mengambil gambar: $e");
+      debugPrint("Error mengambil gambar: $e");
     }
   }
   // save transaksi action

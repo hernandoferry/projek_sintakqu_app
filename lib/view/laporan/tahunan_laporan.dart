@@ -5,7 +5,7 @@ class TahunanLaporan extends StatefulWidget {
   const TahunanLaporan({super.key});
 
   @override
-  _TahunanLaporanState createState() => _TahunanLaporanState();
+  State<TahunanLaporan> createState() => _TahunanLaporanState();
 }
 
 class _TahunanLaporanState extends State<TahunanLaporan> {

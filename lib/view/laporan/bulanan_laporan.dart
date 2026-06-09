@@ -6,7 +6,7 @@ class BulananLaporan extends StatefulWidget {
   const BulananLaporan({super.key});
 
   @override
-  _BulananLaporanState createState() => _BulananLaporanState();
+  State<BulananLaporan> createState() => _BulananLaporanState();
 }
 
 class _BulananLaporanState extends State<BulananLaporan> {
@@ -150,10 +150,14 @@ class _BulananLaporanState extends State<BulananLaporan> {
             ),
 
             const SizedBox(height: 16),
-
-            // 2. CARD TOTAL PENGELUARAN DINAMIS FROM DATABASE
-            FutureBuilder<double>(
-              future: DbHelper().getTotalPengeluaranBulan(bulanTerpilih + 1),
+            FutureBuilder<List<double>>(
+              // ✨ Mengambil 2 data sekaligus: [Bulan Ini, Bulan Lalu]
+              future: Future.wait([
+                DbHelper().getTotalPengeluaranBulan(bulanTerpilih + 1),
+                DbHelper().getTotalPengeluaranBulan(
+                  bulanTerpilih,
+                ), // Bulan lalu (tanpa +1)
+              ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -164,7 +168,50 @@ class _BulananLaporanState extends State<BulananLaporan> {
                   );
                 }
 
-                final totalPengeluaran = snapshot.data ?? 0.0;
+                // Memecah hasil list data snapshot
+                final data = snapshot.data ?? [0.0, 0.0];
+                final totalBulanIni = data[0];
+                final totalBulanLalu = data[1];
+
+                // ✨ LOGIKA PERHITUNGAN DINAMIS
+                String teksPerbandingan = "";
+                IconData ikonTren = Icons.trending_flat;
+                Color warnaIkon = Colors.white;
+
+                if (totalBulanLalu == 0 && totalBulanIni > 0) {
+                  // Antisipasi jika bulan lalu kosong agar tidak terjadi error pembagian dengan 0 (infinity)
+                  teksPerbandingan = "Langkah kecil menuju bebas finansial.";
+                  ikonTren = Icons.trending_up;
+                  warnaIkon = const Color(0XFFE4D329); // Kuning/Oranye
+                } else if (totalBulanLalu == 0 && totalBulanIni == 0) {
+                  teksPerbandingan = "Sama dengan bulan lalu";
+                  ikonTren = Icons.trending_flat;
+                  warnaIkon = Colors.white;
+                } else {
+                  // Hitung selisih persentase
+                  double selisihPersen =
+                      ((totalBulanIni - totalBulanLalu) / totalBulanLalu) * 100;
+
+                  if (selisihPersen > 0) {
+                    teksPerbandingan =
+                        "${selisihPersen.toStringAsFixed(0)}% lebih tinggi dibanding bulan lalu";
+                    ikonTren = Icons.trending_up;
+                    warnaIkon = const Color(
+                      0XFFE4D329,
+                    ); // Naik -> Kuning peringatan
+                  } else if (selisihPersen < 0) {
+                    // Gunakan .abs() agar nilai minusnya hilang (misal -12% menjadi 12% penghematan)
+                    teksPerbandingan =
+                        "${selisihPersen.abs().toStringAsFixed(0)}% lebih hemat dibanding bulan lalu";
+                    ikonTren = Icons.trending_down;
+                    warnaIkon = const Color(0xFF66BB6A); // Hemat -> Hijau segar
+                  } else {
+                    teksPerbandingan = "Sama dengan bulan lalu";
+                    ikonTren = Icons.trending_flat;
+                    warnaIkon = Colors.white;
+                  }
+                }
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
@@ -189,7 +236,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Rp ${totalPengeluaran.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                          'Rp ${totalBulanIni.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -198,10 +245,9 @@ class _BulananLaporanState extends State<BulananLaporan> {
                         ),
                         const SizedBox(height: 6),
 
-                        // PERBAIKAN: STRUKTUR RICHTEXT DIBAWAH INI SEKARANG SUDAH DITUTUP SEMPURNA
                         RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
+                          text: TextSpan(
+                            style: const TextStyle(
                               color: Color(0XFFFFFFFF),
                               fontSize: 12,
                             ),
@@ -209,16 +255,18 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: Padding(
-                                  padding: EdgeInsets.only(right: 4),
+                                  padding: const EdgeInsets.only(right: 4),
                                   child: Icon(
-                                    Icons.trending_up,
-                                    color: Color(0XFFE4D329),
+                                    ikonTren, // Berganti otomatis naik/turun/datar
+                                    color:
+                                        warnaIkon, // Warna dinamis (kuning/hijau/putih)
                                     size: 14,
                                   ),
                                 ),
                               ),
                               TextSpan(
-                                text: "Terbaca otomatis dari database lokal",
+                                text:
+                                    teksPerbandingan, // Teks dinamis hasil kalkulasi
                               ),
                             ],
                           ),
