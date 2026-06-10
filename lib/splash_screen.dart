@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/login.dart';
-import 'package:projek_sintakqu_app/view/home/index_home.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/login.dart';
+import 'package:sintakqu/view/home/index_home.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -43,11 +43,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Column(
         children: [
           Container(
-            height: 914,
+            height: screenHeight * 1,
             width: 420,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -87,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   Padding(
                     padding: EdgeInsetsGeometry.only(bottom: 14.0),
                     child: Text(
-                      'Versi : 1.0.0',
+                      'Versi : Beta',
                       style: TextStyle(color: Color(0xFFC5C6CF)),
                     ),
                   ),

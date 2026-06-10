@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/login.dart';
-import 'package:projek_sintakqu_app/splash_screen.dart';
-import 'package:projek_sintakqu_app/view/home/index_home.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/login.dart';
+import 'package:sintakqu/splash_screen.dart';
+import 'package:sintakqu/view/home/index_home.dart';
 
 void main() {
   runApp(const MyApp());

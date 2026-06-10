@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/view/laporan/detail_kategori_laporan.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/view/laporan/detail_kategori_laporan.dart';
 
 class BulananLaporan extends StatefulWidget {
   const BulananLaporan({super.key});
@@ -101,7 +101,6 @@ class _BulananLaporanState extends State<BulananLaporan> {
           children: [
             const SizedBox(height: 24),
 
-            // 1. HORIZONTAL MONTH SELECTOR
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: SizedBox(
@@ -152,7 +151,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
 
             const SizedBox(height: 16),
             FutureBuilder<List<double>>(
-              // ✨ Mengambil 2 data sekaligus: [Bulan Ini, Bulan Lalu]
+              // Mengambil 2 data sekaligus: [Bulan Ini, Bulan Lalu]
               future: Future.wait([
                 DbHelper().getTotalPengeluaranBulan(bulanTerpilih + 1),
                 DbHelper().getTotalPengeluaranBulan(

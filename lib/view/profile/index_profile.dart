@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/login.dart';
-import 'package:projek_sintakqu_app/view/profile/keamanan.dart';
-import 'package:projek_sintakqu_app/view/profile/pengaturan_akun.dart';
-import 'package:projek_sintakqu_app/view/profile/pusat_bantuan.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/login.dart';
+import 'package:sintakqu/view/profile/keamanan.dart';
+import 'package:sintakqu/view/profile/pengaturan_akun.dart';
+import 'package:sintakqu/view/profile/pusat_bantuan.dart';
 
 class IndexProfile extends StatefulWidget {
   const IndexProfile({super.key});
@@ -97,7 +97,7 @@ class _IndexProfileState extends State<IndexProfile> {
           SizedBox(height: 24),
           Container(
             width: 358,
-            height: 419,
+            height: 500,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
@@ -123,7 +123,7 @@ class _IndexProfileState extends State<IndexProfile> {
                 ),
                 Divider(color: Color(0x4DC5C6CF)),
                 Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                   child: Row(
                     children: [
                       const CircleAvatar(
@@ -164,7 +164,7 @@ class _IndexProfileState extends State<IndexProfile> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                   child: Row(
                     children: [
                       const CircleAvatar(
@@ -202,7 +202,7 @@ class _IndexProfileState extends State<IndexProfile> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                   child: Row(
                     children: [
                       const CircleAvatar(
@@ -244,7 +244,7 @@ class _IndexProfileState extends State<IndexProfile> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                   child: Row(
                     children: [
                       const CircleAvatar(
@@ -288,7 +288,49 @@ class _IndexProfileState extends State<IndexProfile> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: Color(0x1A0050CC),
+                        radius: 20,
+                        child: Icon(
+                          Icons.contact_support,
+                          color: Color(0xFF0050CC),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      TextButton(
+                        onPressed: () async {
+                          await DbHelper().deleteAllTransaksiRaw();
+
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('tabel transaksi di kosongkan '),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "Kosongkan table transaksi",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF181C1E),
+                              ),
+                            ),
+                            SizedBox(width: 11),
+                            Icon(Icons.arrow_forward_ios),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                   child: Row(
                     children: [
                       const CircleAvatar(

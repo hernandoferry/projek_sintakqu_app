@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:projek_sintakqu_app/model/transaksi_model.dart';
+import 'package:sintakqu/model/transaksi_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
@@ -264,14 +264,24 @@ class DbHelper {
 
     // Query mengambil data 7 hari terakhir, dikelompokkan (GROUP BY) per hari
     return await db.rawQuery('''
-    SELECT 
-      date(created_at / 1000, 'unixepoch', 'localtime') AS tanggal,
-      COALESCE(SUM(nominal), 0) AS total
-    FROM transaksi
-    WHERE date(created_at / 1000, 'unixepoch', 'localtime') >= date('now', 'localtime', '-6 days')
-    GROUP BY tanggal
-    ORDER BY tanggal ASC
-  ''');
+      SELECT
+        date(created_at / 1000, 'unixepoch', 'localtime') AS tanggal,
+        COALESCE(SUM(nominal), 0) AS total
+      FROM transaksi
+      WHERE date(created_at / 1000, 'unixepoch', 'localtime') >= date('now', 'localtime', '-6 days')
+      GROUP BY tanggal
+      ORDER BY tanggal ASC
+    ''');
+
+    //   return await db.rawQuery('''
+    //   SELECT
+    //     date(created_at / 1000, 'unixepoch', 'localtime') AS tanggal,
+    //     COALESCE(SUM(nominal), 0) AS total
+    //   FROM transaksi
+    //   GROUP BY tanggal
+    //   ORDER BY tanggal ASC
+    //   LIMIT 7
+    // ''');
   }
 
   // laporan per bulan get total pengeluaran
@@ -384,13 +394,13 @@ class DbHelper {
 
     for (int i = 1; i <= 20; i++) {
       // Membagi transaksi merata di sepanjang bulan Mei (tanggal 1 sampai 28)
-      int tanggalAcak = (i % 28) + 1;
+      int tanggalAcak = (i % 10) + 1;
       int jamAcak = (i * 3) % 24;
       int menitAcak = (i * 7) % 60;
 
       DateTime tanggalMei = DateTime(
         tahunIni,
-        5,
+        6,
         tanggalAcak,
         jamAcak,
         menitAcak,
@@ -419,6 +429,14 @@ class DbHelper {
     Text(
       "Berhasil memasukkan 20 data Mei dengan kategori baru! jangal lupa di hapus fungis ini!",
     );
+  }
+
+  // delete data di tabel transaksi all (WAJIB HAPUS KALO SUDAH DI PRODUCTION)
+  Future<int> deleteAllTransaksiRaw() async {
+    final db = await database;
+
+    // Mengeksekusi perintah SQL DELETE
+    return await db.rawDelete('DELETE FROM transaksi');
   }
 
   //laporan pencarian transaksi berdasarkan input tanggal
