@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/model/transaksi_model.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/transaksi_model.dart';
 
 class Branda extends StatefulWidget {
   const Branda({super.key});
@@ -384,123 +384,132 @@ class _BrandaState extends State<Branda> {
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: Row(
                         children: [
-                          Container(
-                            width: 180.5,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(12),
-                                bottomRight: Radius.circular(12),
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(12),
+                                  bottomRight: Radius.circular(12),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 4,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Spacer(),
-                                Text(
-                                  "Pengeluaran hari ini",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF44474E),
-                                    fontSize: 12,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    "Pengeluaran hari ini",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF44474E),
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  _nominalPengeluaran
-                                      ? 'Rp ••••'
-                                      : _formatRupiah(hariIni),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20,
-                                    color: Color(0xFF0050CC),
+                                  Spacer(),
+                                  Text(
+                                    _nominalPengeluaran
+                                        ? 'Rp ••••'
+                                        : _formatRupiah(hariIni),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: Color(0xFF0050CC),
+                                    ),
                                   ),
-                                ),
-                                Spacer(),
-                              ],
+                                  Spacer(),
+                                ],
+                              ),
                             ),
                           ),
 
-                          Spacer(),
-                          Container(
-                            width: 180.5,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFC07024),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(14),
-                                bottomRight: Radius.circular(12),
-                                topLeft: Radius.circular(14),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 4,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 4),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              width: 170.5,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFC07024),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(14),
+                                  bottomRight: Radius.circular(12),
+                                  topLeft: Radius.circular(14),
                                 ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.only(left: 5),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(9),
-                                topLeft: Radius.circular(9),
-                                bottomRight: Radius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              child: Container(
-                                color: Colors.white,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Spacer(),
-                                    Row(
-                                      children: const [
-                                        SizedBox(width: 16),
-                                        Icon(
-                                          Icons.loyalty,
-                                          color: Color(0xFFC07024),
-                                          size: 13.32,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Minggu ini',
-                                          style: TextStyle(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(9),
+                                  topLeft: Radius.circular(9),
+                                  bottomRight: Radius.circular(12),
+                                ),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Spacer(),
+                                      Row(
+                                        children: const [
+                                          SizedBox(width: 16),
+                                          Icon(
+                                            Icons.loyalty,
                                             color: Color(0xFFC07024),
+                                            size: 13.32,
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            'Minggu ini',
+                                            style: TextStyle(
+                                              color: Color(0xFFC07024),
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Spacer(),
+                                        ],
+                                      ),
+                                      const Spacer(),
+
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 16,
+                                        ),
+                                        child: Text(
+                                          _nominalPengeluaran
+                                              ? 'Rp ••••'
+                                              : _formatRupiah(mingguIni),
+                                          style: const TextStyle(
+                                            fontSize: 20,
                                             fontWeight: FontWeight.w500,
-                                            fontSize: 12,
+                                            color: Color(0xFFC07024),
                                           ),
                                         ),
-                                        Spacer(),
-                                      ],
-                                    ),
-                                    const Spacer(),
-
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 16),
-                                      child: Text(
-                                        _nominalPengeluaran
-                                            ? 'Rp ••••'
-                                            : _formatRupiah(mingguIni),
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFFC07024),
-                                        ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                  ],
+                                      const Spacer(),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -737,7 +746,7 @@ class _BrandaState extends State<Branda> {
                     ),
                   ),
 
-                  SizedBox(height: 4),
+                  SizedBox(height: 16),
 
                   Container(
                     width: double.infinity,
@@ -833,29 +842,42 @@ class _BrandaState extends State<Branda> {
                                           color: Color(0xFF0050CC),
                                         ),
                                         const SizedBox(width: 12),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              transaksi.keterangan,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.normal,
+
+                                        // 💡 1. Bungkus Column ini dengan Expanded agar tahu batas maksimal lebar layar
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                transaksi.keterangan.length > 25
+                                                    ? '${transaksi.keterangan.substring(0, 22)}...'
+                                                    : transaksi.keterangan,
+                                                // 💡 2. Tambahkan properti ini agar teks memotong rapi jika masih mentok
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              tanggalFormat,
-                                              style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.normal,
+                                              Text(
+                                                tanggalFormat,
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                        const Spacer(),
+
+                                        // 💡 3. Ganti Spacer() dengan SizedBox jika menggunakan Expanded di atas
+                                        // agar nominal uang terdorong rapi tanpa merusak layout
+                                        const SizedBox(width: 16),
+
                                         Text(
-                                          "- Rp ${transaksi.nilaiTransaksi.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}", // Data dinamis nominal berformat ribuan
+                                          "- Rp ${transaksi.nilaiTransaksi.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
                                           style: const TextStyle(
                                             fontSize: 16,
                                             color: Color(0XFFBA1A1A),

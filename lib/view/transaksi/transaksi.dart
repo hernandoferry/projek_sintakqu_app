@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/model/transaksi_model.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/transaksi_model.dart';
 
 class Transaksi extends StatefulWidget {
   const Transaksi({super.key});

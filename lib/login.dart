@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/register.dart';
-import 'package:projek_sintakqu_app/view/home/index_home.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/register.dart';
+import 'package:sintakqu/view/home/index_home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

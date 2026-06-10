@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart'; // Tambahkan import database
-import 'package:projek_sintakqu_app/login.dart';
+import 'package:sintakqu/database/db_helper.dart'; // Tambahkan import database
+import 'package:sintakqu/login.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

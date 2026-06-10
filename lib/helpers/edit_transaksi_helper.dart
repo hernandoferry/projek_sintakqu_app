@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
+import 'package:sintakqu/database/db_helper.dart';
 
 class EditTransaksiHelper extends StatefulWidget {
   final Map<String, dynamic> transaksi;

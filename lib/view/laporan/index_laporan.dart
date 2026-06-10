@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/helpers/edit_transaksi_helper.dart';
-import 'package:projek_sintakqu_app/helpers/state_pencarian_helper.dart';
-import 'package:projek_sintakqu_app/view/laporan/bulanan_laporan.dart';
-import 'package:projek_sintakqu_app/view/laporan/tahunan_laporan.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/helpers/edit_transaksi_helper.dart';
+import 'package:sintakqu/helpers/state_pencarian_helper.dart';
+import 'package:sintakqu/view/laporan/bulanan_laporan.dart';
+import 'package:sintakqu/view/laporan/tahunan_laporan.dart';
 
 class IndexLaporan extends StatefulWidget {
   const IndexLaporan({super.key});
@@ -80,58 +80,71 @@ class _IndexLaporanState extends State<IndexLaporan> {
             padding: EdgeInsets.only(left: 16, right: 16, top: 16),
             child: Row(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BulananLaporan()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0XFFE4D329),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BulananLaporan(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0XFFE4D329),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: 8,
-                      bottom: 8,
-                      left: 40,
-                      right: 40,
-                    ),
-                    child: Text(
-                      "Bulanan",
-                      style: TextStyle(fontSize: 16, color: Color(0xFFFFFFFF)),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 8,
+                        bottom: 8,
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Text(
+                        "Bulanan",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFFFFFFFF),
+                        ),
+                      ),
                     ),
                   ),
                 ),
+
                 SizedBox(width: 4),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TahunanLaporan(),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TahunanLaporan(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0XFF3852B4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0XFF3852B4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
                     ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: 8,
-                      bottom: 8,
-                      left: 38,
-                      right: 38,
-                    ),
-                    child: Text(
-                      "Tahunan",
-                      style: TextStyle(fontSize: 16, color: Color(0xFFFFFFFF)),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 8,
+                        bottom: 8,
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Text(
+                        "Tahunan",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFFFFFFFF),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -298,7 +311,6 @@ class _IndexLaporanState extends State<IndexLaporan> {
                               ),
                             ),
 
-                            // ✨ KELOMPOK NOMINAL & TOMBOL AKSI
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

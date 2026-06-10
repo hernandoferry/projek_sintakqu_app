@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projek_sintakqu_app/database/db_helper.dart';
-import 'package:projek_sintakqu_app/model/transaksi_model.dart';
+import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/transaksi_model.dart';
 
 class DetailKategoriLaporan extends StatefulWidget {
   final String namaKategori;
@@ -79,7 +79,6 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
             );
           }
 
-          // ✨ AMBIL TOTAL LANGSUNG DARI BARIS PERTAMA HASIL SQL WINDOW FUNCTION
           final double totalPengeluaranKategori =
               (dataRaw[0]['total_pengeluaran_kategori'] as num).toDouble();
 
@@ -96,7 +95,6 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
               children: [
                 const SizedBox(height: 24),
 
-                // 1. DYNAMIC GRADIENT CARD TOTAL PENGELUARAN
                 Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   child: Container(
@@ -171,7 +169,6 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                   ),
                 ),
 
-                // SECTION TITLE RIWAYAT
                 Padding(
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
                   child: Row(
@@ -197,7 +194,6 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                 ),
                 const SizedBox(height: 12),
 
-                // 2. DYNAMIC TRANSACTIONS LIST
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -220,75 +216,84 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                           (Match m) => '${m[1]}.',
                         );
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(8),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
                         ),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: const Color(0XFF0050CC),
-                              child: Icon(
-                                dapatkanIkonKategori(transaksi.kategoriTrans),
-                                color: const Color(0xFFFFFFFF),
-                                size: 20,
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(8),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        judul,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Color(0xFF212121),
-                                        ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor: const Color(0XFF0050CC),
+                                child: Icon(
+                                  dapatkanIkonKategori(transaksi.kategoriTrans),
+                                  color: const Color(0xFFFFFFFF),
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            judul,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Color(0xFF212121),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            tanggal,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        tanggal,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    "Rp $formatItemRupiah",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF0050CC),
                                     ),
-                                  ),
-                                ],
+
+                                    const SizedBox(width: 12),
+
+                                    Text(
+                                      "Rp $formatItemRupiah",
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0050CC),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
