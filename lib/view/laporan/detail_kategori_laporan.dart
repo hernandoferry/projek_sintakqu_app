@@ -232,7 +232,9 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      DetailTransaksiItemLaporan(),
+                                      DetailTransaksiItemLaporan(
+                                        transaksiId: transaksi.id!,
+                                      ),
                                 ),
                               );
                             },

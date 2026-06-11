@@ -87,17 +87,21 @@ class DbHelper {
   }
 
   //  READ BY ID (Ambil Satu Transaksi Berdasarkan ID)
-  Future<Map<String, dynamic>?> ambilTransaksiById(int id) async {
+  Future<TransaksiModel?> getTransaksiById(int id) async {
     final db = await database;
-    List<Map<String, dynamic>> hasil = await db.query(
+
+    final List<Map<String, dynamic>> maps = await db.query(
       'transaksi',
       where: 'id = ?',
       whereArgs: [id],
+      limit: 1,
     );
 
-    if (hasil.isNotEmpty) {
-      return hasil.first;
+    // Konversi hasil map dari SQLite menjadi objek TransaksiModel
+    if (maps.isNotEmpty) {
+      return TransaksiModel.fromMap(maps.first);
     }
+
     return null;
   }
 

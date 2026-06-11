@@ -1,18 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class DetailGambar extends StatelessWidget {
   final String imageUrl;
+
   const DetailGambar({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
+    final file = File(imageUrl);
+
     return Scaffold(
-      // Latar belakang hitam khas galeri foto
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Pratinjau Gambar",
           style: TextStyle(color: Colors.white),
@@ -20,23 +24,25 @@ class DetailGambar extends StatelessWidget {
       ),
       body: Center(
         child: Hero(
-          tag:
-              'detail_foto_transaksi', // Menghubungkan animasi transisi dari halaman sebelumnya
+          tag: 'detail_foto_transaksi',
           child: InteractiveViewer(
-            panEnabled: true, // Mengizinkan gambar digeser saat di-zoom
+            minScale: 0.5,
+            maxScale: 4.0,
+            panEnabled: true,
             boundaryMargin: const EdgeInsets.all(20),
-            minScale: 0.5, // Batas zoom terkecil
-            maxScale: 4.0, // Batas zoom terbesar (4x lipat)
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.contain, // Memastikan seluruh gambar muat di layar
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                );
-              },
-            ),
+            child: file.existsSync()
+                ? Image.file(file, fit: BoxFit.contain)
+                : const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.broken_image, color: Colors.white, size: 80),
+                      SizedBox(height: 12),
+                      Text(
+                        'Gambar tidak ditemukan',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),
