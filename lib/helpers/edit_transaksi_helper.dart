@@ -153,6 +153,7 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
             const SizedBox(height: 12),
             TextField(
               controller: txtKategori,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: "Kategori",
                 border: OutlineInputBorder(),
