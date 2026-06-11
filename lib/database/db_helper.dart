@@ -31,7 +31,7 @@ class DbHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nama_lengkap TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        no_hp TEXT,
+        no_hp TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         is_login INTEGER DEFAULT 0,
         status TEXT,
