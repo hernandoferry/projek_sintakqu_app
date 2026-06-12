@@ -12,7 +12,6 @@ class Branda extends StatefulWidget {
 
 class _BrandaState extends State<Branda> {
   late Future<Map<String, dynamic>?> _ambilDataUserLogin;
-  // late Future<List<TransaksiModel>> _ambilLastPengeluaran;
   late Future<Map<String, double>> _ambilRekapPengeluaran;
   late Future<List<Map<String, dynamic>>> _ambilStatistikChart;
   bool _nominalPengeluaran = true;

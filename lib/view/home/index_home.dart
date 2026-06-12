@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sintakqu/view/home/branda.dart';
 import 'package:sintakqu/view/laporan/index_laporan.dart';
 import 'package:sintakqu/view/profile/index_profile.dart';
-import 'package:sintakqu/view/profile/pengaturan_akun.dart';
 import 'package:sintakqu/view/transaksi/transaksi.dart';
 
 class IndexHome extends StatefulWidget {
@@ -20,7 +19,6 @@ class _IndexHomeState extends State<IndexHome> {
     const Transaksi(),
     const IndexLaporan(),
     const IndexProfile(),
-    const PengaturanAkun(),
   ];
 
   @override
