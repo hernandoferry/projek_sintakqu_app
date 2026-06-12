@@ -35,6 +35,7 @@ class DbHelper {
         password TEXT NOT NULL,
         is_login INTEGER DEFAULT 0,
         status TEXT,
+        foto_profil TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     ''');
@@ -52,6 +53,8 @@ class DbHelper {
       )
     ''');
   }
+
+  /////////////////////query untuk aksi transaksi list//////////////////////////
 
   // 1. CREATE (Tambah Transaksi Baru)
   Future<int> tambahTransaksi(Map<String, dynamic> data) async {
@@ -133,7 +136,9 @@ class DbHelper {
     return await db.delete('transaksi', where: 'id = ?', whereArgs: [id]);
   }
 
-  // 6. Fungsi Registrasi Akun Baru
+  ///// query untuk aksi table user //////////////////////////////////////////
+
+  //Registrasi akun baru
   Future<int> registrasiUser(Map<String, dynamic> data) async {
     final db = await database;
 
@@ -150,7 +155,7 @@ class DbHelper {
     return await db.insert('user_sintakqu', data);
   }
 
-  // 7. Fungsi Cek Login
+  //Fungsi Cek Login
   Future<bool> cekLogin(String email, String password) async {
     final db = await database;
 
@@ -173,7 +178,7 @@ class DbHelper {
     return false;
   }
 
-  // 8. Fungsi Auto-Redirect
+  // Fungsi Auto-Redirect
   Future<bool> cekStatusLogin() async {
     final db = await database;
 
@@ -187,7 +192,7 @@ class DbHelper {
     return hasil.isNotEmpty;
   }
 
-  // 9. Fungsi Logout
+  // Fungsi Logout
   Future<void> logoutUser() async {
     final db = await database;
     await db.update(
@@ -198,7 +203,7 @@ class DbHelper {
     );
   }
 
-  // 10. Ambil 1 data user
+  // Ambil 1 data user
   Future<Map<String, dynamic>?> getDataLoggeduser() async {
     final db = await database;
 
