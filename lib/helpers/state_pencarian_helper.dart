@@ -74,7 +74,7 @@ class _StatePencarianHelperState extends State<StatePencarianHelper>
 
             const SizedBox(height: 16),
             const Text(
-              "Upsss... Belum Ada Data !!! ",
+              "Upsss...!!! ",
               style: TextStyle(
                 color: Color(0XFF0055CC),
                 fontSize: 16,
@@ -85,7 +85,7 @@ class _StatePencarianHelperState extends State<StatePencarianHelper>
             const Padding(
               padding: EdgeInsets.only(left: 18, right: 18, bottom: 48),
               child: Text(
-                "Pilih tanggal untuk melihat laporan harian transaksi anda secara rinci.",
+                "Pilih tanggal untuk melihat laporan transaksi anda.",
                 style: TextStyle(fontSize: 16, color: Color(0x800055CC)),
                 textAlign: TextAlign.center,
               ),

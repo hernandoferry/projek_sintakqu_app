@@ -83,7 +83,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
     }
 
     // Tentukan apakah ada salah satu field yang sedang dalam mode edit
-    bool sedangModeEdit = _isEditingNama || _isEditingEmail || _isEditingNoHp;
+    //bool sedangModeEdit = _isEditingNama || _isEditingEmail || _isEditingNoHp;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
