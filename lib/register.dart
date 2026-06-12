@@ -8,7 +8,6 @@ class Register extends StatefulWidget {
 
   @override
   State<Register> createState() => _RegisterState();
-  // _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
@@ -20,6 +19,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _noHpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true; // Status awal password disembunyikan
 
   @override
   void dispose() {
@@ -201,7 +201,7 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       child: TextFormField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Kata sandi tidak boleh kosong';
@@ -211,9 +211,25 @@ class _RegisterState extends State<Register> {
                           }
                           return null;
                         },
-                        decoration: _inputDecoration('Masukkan Kata Sandi'),
+                        decoration: _inputDecoration('Masukkan Kata Sandi')
+                            .copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: const Color(0xFF0050CC),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
                       ),
                     ),
+
                     const SizedBox(height: 15),
 
                     Padding(
@@ -226,8 +242,7 @@ class _RegisterState extends State<Register> {
                           ),
                           backgroundColor: Colors.blue,
                         ),
-                        onPressed:
-                            _prosesDaftarUser, // Panggil fungsi pendaftaran database
+                        onPressed: _prosesDaftarUser,
                         child: const Text(
                           'DAFTAR SEKARANG',
                           style: TextStyle(
