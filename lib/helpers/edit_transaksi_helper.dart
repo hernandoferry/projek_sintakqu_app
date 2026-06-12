@@ -83,7 +83,6 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
             ),
             const SizedBox(height: 16),
 
-            // PREVIEW GAMBAR
             Center(
               child: Column(
                 children: [
@@ -170,7 +169,6 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
             ),
             const SizedBox(height: 20),
 
-            // TOMBOL SIMPAN
             SizedBox(
               width: double.infinity,
               height: 48,
@@ -192,11 +190,11 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
                   );
 
                   if (!context.mounted) {
-                    return; // Mengamankan async gap sesuai standar linter
+                    return;
                   }
 
                   Navigator.pop(context);
-                  widget.onSaved(); // Panggil fungsi refresh di halaman utama
+                  widget.onSaved();
                 },
                 child: const Text(
                   "Simpan Perubahan",

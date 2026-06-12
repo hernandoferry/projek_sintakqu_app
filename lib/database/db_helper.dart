@@ -138,6 +138,21 @@ class DbHelper {
 
   ///// query untuk aksi table user //////////////////////////////////////////
 
+  // Fungsi memperbarui informasi personal user
+  Future<int> updateInformasiPersonal(
+    String nama,
+    String email,
+    String noHp,
+  ) async {
+    final db = await database;
+    return await db.update(
+      'user_sintakqu',
+      {'nama_lengkap': nama, 'email': email, 'no_hp': noHp},
+      where: 'is_login = ?',
+      whereArgs: [1],
+    );
+  }
+
   //Registrasi akun baru
   Future<int> registrasiUser(Map<String, dynamic> data) async {
     final db = await database;
