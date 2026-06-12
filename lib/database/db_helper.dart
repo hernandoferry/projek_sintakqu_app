@@ -220,6 +220,17 @@ class DbHelper {
     return null;
   }
 
+  // Fungsi memperbarui path foto profil untuk user yang sedang login
+  Future<int> updateProfileImage(String path) async {
+    final db = await database;
+    return await db.update(
+      'user_sintakqu',
+      {'foto_profil': path},
+      where: 'is_login = ?',
+      whereArgs: [1], //sedang login
+    );
+  }
+
   // ambil total pengeluran hari ini,minggu ini dan bulan ini
   Future<Map<String, double>> ambilRekapPengeluaran() async {
     final db = await database; // Sesuaikan dengan variabel database Anda
