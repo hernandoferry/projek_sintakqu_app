@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sintakqu/database/db_helper.dart';
@@ -180,31 +182,46 @@ class _BrandaState extends State<Branda> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<Map<String, dynamic>?>(
+        title: FutureBuilder(
           future: _ambilDataUserLogin,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Memuat...');
             }
 
+            // Perbaikan: Tambahkan pengecekan null safety agar aplikasi tidak crash jika data kosong
+            if (snapshot.hasError ||
+                !snapshot.hasData ||
+                snapshot.data == null) {
+              return const Text('Gagal memuat data');
+            }
             final userData = snapshot.data!;
             final String namaUser = userData['nama_lengkap'] ?? 'Pengguna';
-
+            final String imagePath = userData['foto_profil'] ?? '';
             return Row(
               children: [
-                Image.asset("assets/images/user_dummy.png"),
+                CircleAvatar(
+                  radius:
+                      25, // Anda bisa mengubah ukuran lingkaran dengan mengganti nilai radius ini
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage:
+                      imagePath.isNotEmpty && File(imagePath).existsSync()
+                      ? FileImage(File(imagePath))
+                      : const AssetImage("assets/images/user_dummy.png")
+                            as ImageProvider,
+                ),
+
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     left: 16,
                     right: 18,
                     top: 18,
                     bottom: 18,
                   ),
-
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(right: 40),
                         child: Text(
                           "Hallo,",
@@ -216,7 +233,7 @@ class _BrandaState extends State<Branda> {
                       ),
                       Text(
                         namaUser,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -224,8 +241,8 @@ class _BrandaState extends State<Branda> {
                     ],
                   ),
                 ),
-                Spacer(),
-                Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
+                const Spacer(),
+                const Icon(Icons.notifications_none, color: Color(0xFF0050CC)),
               ],
             );
           },
