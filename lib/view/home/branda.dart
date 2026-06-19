@@ -189,7 +189,7 @@ class _BrandaState extends State<Branda> {
               return const Text('Memuat...');
             }
 
-            // Perbaikan: Tambahkan pengecekan null safety agar aplikasi tidak crash jika data kosong
+            //  Tambahkan pengecekan null safety agar aplikasi tidak crash jika data kosong
             if (snapshot.hasError ||
                 !snapshot.hasData ||
                 snapshot.data == null) {
@@ -201,8 +201,7 @@ class _BrandaState extends State<Branda> {
             return Row(
               children: [
                 CircleAvatar(
-                  radius:
-                      25, // Anda bisa mengubah ukuran lingkaran dengan mengganti nilai radius ini
+                  radius: 25,
                   backgroundColor: Colors.grey[300],
                   backgroundImage:
                       imagePath.isNotEmpty && File(imagePath).existsSync()

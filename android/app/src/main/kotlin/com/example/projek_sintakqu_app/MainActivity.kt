@@ -1,4 +1,4 @@
-package com.example.projek_sintakqu_app
+package com.ppkd.sintakqu
 
 import io.flutter.embedding.android.FlutterActivity
 
