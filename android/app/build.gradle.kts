@@ -1,3 +1,13 @@
+//begin tambahkan kode dibawah ini untuk proses upload ke playstore
+import java.util.Properties
+val keystoreProperties = Properties().apply {
+ val f = rootProject.file("key.properties")
+ if (f.exists()) {
+ load(f.inputStream())
+ }
+}
+//end tambahkan kode dibawah ini untuk proses upload ke playstore
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -30,11 +40,26 @@ android {
         versionName = flutter.versionName
     }
 
+//begin tambahkan kode berikut untuk membaca file release-key dan key.propertease
+    signingConfigs {
+     if (keystoreProperties.isNotEmpty()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+   
+  }
+  //end tambahkan kode berikut untuk membaca file release-key dan key.propertease
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+           // signingConfig = signingConfigs.getByName("debug")
+           signingConfig = signingConfigs.getByName("release") //ganti ke mode release untuk playstore
         }
     }
 }
