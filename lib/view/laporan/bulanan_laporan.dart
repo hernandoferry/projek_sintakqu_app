@@ -94,7 +94,66 @@ class _BulananLaporanState extends State<BulananLaporan> {
           preferredSize: const Size.fromHeight(1.0),
           child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.print_outlined, color: Color(0xFF0055CC)),
+            tooltip: 'Pilihan Ekspor',
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (BuildContext context) {
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Pilih Format Ekspor',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.picture_as_pdf,
+                              color: Colors.red,
+                            ),
+                            title: const Text('Ekspor ke PDF'),
+
+                            onTap: () {
+                              Navigator.pop(context);
+                              print('Mengekspor ke PDF...');
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.table_view,
+                              color: Colors.green,
+                            ),
+                            title: const Text('Ekspor ke Excel'),
+
+                            onTap: () {
+                              Navigator.pop(context);
+                              print('Mengekspor ke Excel...');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
+
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
