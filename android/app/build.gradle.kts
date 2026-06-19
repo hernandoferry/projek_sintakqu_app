@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.projek_sintakqu_app"
+    namespace = "com.ppkd.sintakqu"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.projek_sintakqu_app"
+        applicationId = "com.ppkd.sintakqu"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

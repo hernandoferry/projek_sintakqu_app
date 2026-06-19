@@ -20,7 +20,7 @@ class _IndexProfileState extends State<IndexProfile> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
-  // Menggunakan objek Future biasa untuk menampung data gabungan
+  // Menggunakan objek Future untuk menampung data gabungan
   late Future<Map<String, dynamic>?> _ambilDataUser;
 
   @override
@@ -149,7 +149,6 @@ class _IndexProfileState extends State<IndexProfile> {
           child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
       ),
-      // 3. Memindahkan FutureBuilder ke bagian paling atas setelah SingleChildScrollView
       body: FutureBuilder<Map<String, dynamic>?>(
         future: _ambilDataUser,
         builder: (context, snapshot) {
@@ -222,7 +221,6 @@ class _IndexProfileState extends State<IndexProfile> {
                 ),
                 const SizedBox(height: 10),
 
-                // Menampilkan nama pengguna yang didapatkan dari pembungkus FutureBuilder
                 Text(
                   setNamaUser,
                   style: const TextStyle(
@@ -413,93 +411,93 @@ class _IndexProfileState extends State<IndexProfile> {
                         ),
                       ),
 
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
-                        child: Row(
-                          children: [
-                            const CircleAvatar(
-                              backgroundColor: Color(0x1A0050CC),
-                              radius: 20,
-                              child: Icon(
-                                Icons.contact_support,
-                                color: Color(0xFF0050CC),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            TextButton(
-                              onPressed: () async {
-                                await DbHelper().insert20DataDummyMei();
+                      // Padding(
+                      //   padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      //   child: Row(
+                      //     children: [
+                      //       const CircleAvatar(
+                      //         backgroundColor: Color(0x1A0050CC),
+                      //         radius: 20,
+                      //         child: Icon(
+                      //           Icons.contact_support,
+                      //           color: Color(0xFF0050CC),
+                      //         ),
+                      //       ),
+                      //       SizedBox(width: 16),
+                      //       TextButton(
+                      //         onPressed: () async {
+                      //           await DbHelper().insert20DataDummyMei();
 
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      '20 Data Dummy Mei Berhasil Ditambahkan!',
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Insert Dummy Data",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF181C1E),
-                                    ),
-                                  ),
-                                  SizedBox(width: 11),
-                                  Icon(Icons.arrow_forward_ios),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      //           if (!context.mounted) return;
+                      //           ScaffoldMessenger.of(context).showSnackBar(
+                      //             const SnackBar(
+                      //               content: Text(
+                      //                 '20 Data Dummy Mei Berhasil Ditambahkan!',
+                      //               ),
+                      //             ),
+                      //           );
+                      //         },
+                      //         child: Row(
+                      //           children: [
+                      //             Text(
+                      //               "Insert Dummy Data",
+                      //               style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 color: Color(0xFF181C1E),
+                      //               ),
+                      //             ),
+                      //             SizedBox(width: 11),
+                      //             Icon(Icons.arrow_forward_ios),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
-                        child: Row(
-                          children: [
-                            const CircleAvatar(
-                              backgroundColor: Color(0x1A0050CC),
-                              radius: 20,
-                              child: Icon(
-                                Icons.contact_support,
-                                color: Color(0xFF0050CC),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            TextButton(
-                              onPressed: () async {
-                                await DbHelper().deleteAllTransaksiRaw();
+                      // Padding(
+                      //   padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                      //   child: Row(
+                      //     children: [
+                      //       const CircleAvatar(
+                      //         backgroundColor: Color(0x1A0050CC),
+                      //         radius: 20,
+                      //         child: Icon(
+                      //           Icons.contact_support,
+                      //           color: Color(0xFF0050CC),
+                      //         ),
+                      //       ),
+                      //       SizedBox(width: 16),
+                      //       TextButton(
+                      //         onPressed: () async {
+                      //           await DbHelper().deleteAllTransaksiRaw();
 
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'tabel transaksi di kosongkan ',
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Kosongkan table transaksi",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF181C1E),
-                                    ),
-                                  ),
-                                  SizedBox(width: 11),
-                                  Icon(Icons.arrow_forward_ios),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      //           if (!context.mounted) return;
+                      //           ScaffoldMessenger.of(context).showSnackBar(
+                      //             const SnackBar(
+                      //               content: Text(
+                      //                 'tabel transaksi di kosongkan ',
+                      //               ),
+                      //             ),
+                      //           );
+                      //         },
+                      //         child: Row(
+                      //           children: [
+                      //             Text(
+                      //               "Kosongkan table transaksi",
+                      //               style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 color: Color(0xFF181C1E),
+                      //               ),
+                      //             ),
+                      //             SizedBox(width: 11),
+                      //             Icon(Icons.arrow_forward_ios),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: Row(
