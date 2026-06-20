@@ -429,7 +429,7 @@ class DbHelper {
 
     for (int i = 1; i <= 20; i++) {
       // Membagi transaksi merata di sepanjang bulan Mei (tanggal 1 sampai 28)
-      int tanggalAcak = (i % 10) + 1;
+      int tanggalAcak = (i % 19) + 1;
       int jamAcak = (i * 3) % 24;
       int menitAcak = (i * 7) % 60;
 
@@ -513,5 +513,25 @@ class DbHelper {
   ''';
 
     return await db.rawQuery(query, [kategori, epochAwal, epochAkhir]);
+  }
+
+  // get data untuk laporan bulanan pdf dan excel
+  Future<List<Map<String, dynamic>>> getLaporanBulanan(int bulan) async {
+    final db = await database;
+
+    final tahun = DateTime.now().year;
+
+    final awalBulan = DateTime(tahun, bulan, 1);
+    final akhirBulan = DateTime(tahun, bulan + 1, 1);
+
+    return await db.query(
+      'transaksi',
+      where: 'created_at >= ? AND created_at < ?',
+      whereArgs: [
+        awalBulan.millisecondsSinceEpoch,
+        akhirBulan.millisecondsSinceEpoch,
+      ],
+      orderBy: 'created_at DESC',
+    );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/services/export_pdf_service.dart';
 import 'package:sintakqu/view/laporan/detail_kategori_laporan.dart';
 
 class BulananLaporan extends StatefulWidget {
@@ -125,10 +127,60 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               color: Colors.red,
                             ),
                             title: const Text('Ekspor ke PDF'),
+                            onTap: () async {
+                              final navigator = Navigator.of(context);
+                              final messenger = ScaffoldMessenger.of(context);
 
-                            onTap: () {
-                              Navigator.pop(context);
-                              print('Mengekspor ke PDF...');
+                              navigator.pop();
+
+                              try {
+                                final data = await DbHelper().getLaporanBulanan(
+                                  bulanTerpilih + 1,
+                                );
+
+                                final file = await ExportPdfService.generatePdf(
+                                  data,
+                                  daftarBulanTersedia[bulanTerpilih],
+                                );
+
+                                if (!mounted) return;
+
+                                final result = await OpenFilex.open(file.path);
+
+                                if (!mounted) return;
+
+                                if (result.type == ResultType.done) {
+                                  messenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'PDF berhasil dibuat dan dibuka',
+                                      ),
+                                      backgroundColor: Color.fromARGB(
+                                        255,
+                                        3,
+                                        226,
+                                        118,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  messenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'PDF berhasil dibuat tetapi tidak dapat dibuka: ${result.message}',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (!mounted) return;
+
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text('Gagal membuat PDF: $e'),
+                                  ),
+                                );
+                              }
                             },
                           ),
                           ListTile(
