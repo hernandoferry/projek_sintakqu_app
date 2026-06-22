@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/services/export_excel_service.dart';
 import 'package:sintakqu/services/export_pdf_service.dart';
 import 'package:sintakqu/view/laporan/detail_kategori_laporan.dart';
 
@@ -189,10 +190,71 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               color: Colors.green,
                             ),
                             title: const Text('Ekspor ke Excel'),
+                            onTap: () async {
+                              final navigator = Navigator.of(context);
+                              final messenger = ScaffoldMessenger.of(context);
+                              navigator.pop();
 
-                            onTap: () {
-                              Navigator.pop(context);
-                              print('Mengekspor ke Excel...');
+                              try {
+                                final data = await DbHelper().getLaporanBulanan(
+                                  bulanTerpilih + 1,
+                                );
+
+                                if (data.isEmpty) {
+                                  if (!mounted) return;
+
+                                  messenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Tidak ada data pada bulan yang dipilih',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                final file =
+                                    await ExportExcelService.generateExcel(
+                                      data,
+                                      daftarBulanTersedia[bulanTerpilih],
+                                    );
+
+                                final result = await OpenFilex.open(file.path);
+
+                                if (!mounted) return;
+
+                                if (result.type == ResultType.done) {
+                                  messenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Excel berhasil dibuat dan dibuka',
+                                      ),
+                                      backgroundColor: Color.fromARGB(
+                                        255,
+                                        3,
+                                        226,
+                                        118,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  messenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Excel berhasil dibuat tetapi tidak dapat dibuka: ${result.message}',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (!mounted) return;
+
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text('Gagal membuat Excel: $e'),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],
@@ -284,7 +346,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                 final totalBulanIni = data[0];
                 final totalBulanLalu = data[1];
 
-                // ✨ LOGIKA PERHITUNGAN DINAMIS
+                // LOGIKA PERHITUNGAN DINAMIS
                 String teksPerbandingan = "";
                 IconData ikonTren = Icons.trending_flat;
                 Color warnaIkon = Colors.white;
