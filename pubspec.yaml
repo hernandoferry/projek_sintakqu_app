@@ -4,6 +4,7 @@ description: "Sistem Informasi Catatan Keuangan Keluarga Qu"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
+<<<<<<< HEAD
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -21,31 +22,30 @@ version: 1.0.0+3
 environment:
   sdk: ^3.11.5
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.8
   device_info_plus: ^13.1.0
+  dio: ^5.9.2
   excel: ^4.0.6
   fl_chart: ^1.2.0
   flutter:
     sdk: flutter
   image_picker: ^1.2.2
   intl: ^0.20.2
+  open_filex: ^4.7.0
   path: ^1.9.1
   path_provider: ^2.1.5
   pdf: ^3.12.0
+  retrofit: ^4.9.2
   sqflite: ^2.4.2+1
-  open_filex: ^4.7.0
 
 dev_dependencies:
+  build_runner: ^2.15.0
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  json_serializable: ^6.14.0
+  retrofit_generator: ^10.2.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
