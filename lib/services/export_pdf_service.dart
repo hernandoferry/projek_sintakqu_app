@@ -5,10 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
 
 class ExportPdfService {
   static Future<File> generatePdf(
-    List<Map<String, dynamic>> data,
+    List<TransaksiCloudModel> data,
     String namaBulan,
   ) async {
     final pdf = pw.Document();
@@ -20,8 +21,8 @@ class ExportPdfService {
 
     double total = 0;
 
-    for (var item in data) {
-      total += (item['nominal'] as num).toDouble();
+    for (final item in data) {
+      total += item.nilaiTransaksi;
     }
     pw.Widget headerCell(String text) {
       return pw.Container(
@@ -45,9 +46,9 @@ class ExportPdfService {
       'assets/images/icon_dompet.png',
     );
 
-    final Uint8List logoBytes = logoData.buffer.asUint8List();
+    // final Uint8List logoBytes = logoData.buffer.asUint8List();
 
-    final logo = pw.MemoryImage(logoBytes);
+    // final logo = pw.MemoryImage(logoBytes);
 
     pdf.addPage(
       pw.MultiPage(
@@ -55,12 +56,12 @@ class ExportPdfService {
           pw.Center(
             child: pw.Column(
               children: [
-                pw.Image(logo, width: 100, height: 100),
-                pw.SizedBox(height: 8),
+                // pw.Image(logo, width: 50, height: 50),
+                // pw.SizedBox(height: 4),
                 pw.Text(
                   'SintakQu',
                   style: pw.TextStyle(
-                    fontSize: 22,
+                    fontSize: 16,
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
@@ -104,17 +105,15 @@ class ExportPdfService {
                 final index = entry.key;
                 final item = entry.value;
 
-                final tanggal = DateTime.fromMillisecondsSinceEpoch(
-                  item['created_at'] as int,
-                );
+                final tanggal = item.createdAt;
 
                 return pw.TableRow(
                   children: [
                     dataCell('${index + 1}'),
-                    dataCell('${tanggal.day}/${tanggal.month}/${tanggal.year}'),
-                    dataCell(item['kategori'].toString()),
-                    dataCell(rupiahFormat.format(item['nominal'])),
-                    dataCell(item['keterangan']?.toString() ?? '-'),
+                    dataCell("${tanggal.day}/${tanggal.month}/${tanggal.year}"),
+                    dataCell(item.kategoriTrans),
+                    dataCell(rupiahFormat.format(item.nilaiTransaksi)),
+                    dataCell(item.keterangan),
                   ],
                 );
               }),

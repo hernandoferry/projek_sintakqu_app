@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sintakqu/database/db_helper.dart';
-import 'package:sintakqu/model/transaksi_model.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 import 'package:sintakqu/view/laporan/detail_transaksi_item_laporan.dart';
 
 class DetailKategoriLaporan extends StatefulWidget {
@@ -58,8 +58,8 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
           child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DbHelper().getTransaksiDanTotalPerKategoriBulan(
+      body: FutureBuilder<List<TransaksiCloudModel>>(
+        future: TransaksiService().getDetailKategoriLaporan(
           widget.namaKategori,
           widget.bulanAngka,
         ),
@@ -68,7 +68,7 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final List<Map<String, dynamic>> dataRaw = snapshot.data ?? [];
+          final dataRaw = snapshot.data ?? <TransaksiCloudModel>[];
 
           // Tampilan jika tidak ada transaksi pada kategori di bulan ini
           if (dataRaw.isEmpty) {
@@ -80,8 +80,11 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
             );
           }
 
-          final double totalPengeluaranKategori =
-              (dataRaw[0]['total_pengeluaran_kategori'] as num).toDouble();
+          double totalPengeluaranKategori = 0;
+
+          for (final transaksi in dataRaw) {
+            totalPengeluaranKategori += transaksi.nilaiTransaksi;
+          }
 
           // Format Rupiah untuk Total Ringkasan Card Atas
           String formatTotalRupiah = totalPengeluaranKategori
@@ -201,7 +204,7 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                   itemCount: dataRaw.length,
                   itemBuilder: (context, index) {
                     // Mapping Map SQLite ke TransaksiModel
-                    final transaksi = TransaksiModel.fromMap(dataRaw[index]);
+                    final transaksi = dataRaw[index];
 
                     final String judul = transaksi.keterangan.isEmpty
                         ? '-'
@@ -217,101 +220,99 @@ class _DetailKategoriLaporanState extends State<DetailKategoriLaporan> {
                           (Match m) => '${m[1]}.',
                         );
 
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailTransaksiItemLaporan(
-                                        transaksiId: transaksi.id!,
-                                      ),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailTransaksiItemLaporan(
+                                      transaksiId: transaksi.id,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(8),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(8),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: const Color(0XFF0050CC),
+                                  child: Icon(
+                                    dapatkanIkonKategori(
+                                      transaksi.kategoriTrans,
+                                    ),
+                                    color: const Color(0xFFFFFFFF),
+                                    size: 20,
                                   ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: const Color(0XFF0050CC),
-                                    child: Icon(
-                                      dapatkanIkonKategori(
-                                        transaksi.kategoriTrans,
+                                ),
+                                const SizedBox(width: 12),
+
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              judul,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Color(0xFF212121),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              tanggal,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      color: const Color(0xFFFFFFFF),
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
 
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                judul,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                  color: Color(0xFF212121),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                tanggal,
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                      const SizedBox(width: 12),
+
+                                      Text(
+                                        "Rp $formatItemRupiah",
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF0050CC),
                                         ),
-
-                                        const SizedBox(width: 12),
-
-                                        Text(
-                                          "Rp $formatItemRupiah",
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF0050CC),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/user_model.dart';
+import 'package:sintakqu/services/firestore_service.dart';
 
 class PengaturanAkun extends StatefulWidget {
   const PengaturanAkun({super.key});
@@ -21,6 +23,8 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
   bool _isEditingEmail = false;
   bool _isEditingNoHp = false;
   bool _isLoading = true;
+  // inisialisasi firestoreservice
+  final FirestoreService _firestoreService = FirestoreService();
 
   @override
   void initState() {
@@ -30,41 +34,73 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
 
   // Ambil data dari SQLite untuk ditampilkan pertama kali di form
   Future<void> _muatDataAwalUser() async {
-    final dataUser = await DbHelper().getDataLoggeduser();
-    if (dataUser != null) {
-      _namaController.text = dataUser['nama_lengkap'] ?? '';
-      _emailController.text = dataUser['email'] ?? '';
-      _noHpController.text = dataUser['no_hp'] ?? '';
+    try {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+
+      if (firebaseUser == null) {
+        throw Exception("User belum login");
+      }
+
+      final UserModel user = await _firestoreService.getUser(firebaseUser.uid);
+
+      _namaController.text = user.namaLengkap;
+      _emailController.text = user.email;
+      _noHpController.text = user.noHp;
+    } catch (e) {
+      debugPrint("Gagal memuat data user : $e");
     }
-    setState(() {
-      _isLoading = false;
-    });
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   // Fungsi untuk eksekusi penyimpanan ke SQFlite
   Future<void> _simpanPerubahanData() async {
-    if (_formKey.currentState!.validate()) {
-      int hasil = await DbHelper().updateInformasiPersonal(
-        _namaController.text.trim(),
-        _emailController.text.trim(),
-        _noHpController.text.trim(),
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+
+      if (firebaseUser == null) {
+        throw Exception("User belum login.");
+      }
+
+      await _firestoreService.updateUser(
+        uid: firebaseUser.uid,
+        namaLengkap: _namaController.text.trim(),
+        email: _emailController.text.trim(),
+        noHp: _noHpController.text.trim(),
       );
 
       if (!mounted) return;
 
-      if (hasil > 0) {
-        setState(() {
-          _isEditingNama = false;
-          _isEditingEmail = false;
-          _isEditingNoHp = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Informasi personal berhasil diperbarui!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      setState(() {
+        _isEditingNama = false;
+        _isEditingEmail = false;
+        _isEditingNoHp = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Informasi personal berhasil diperbarui."),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal memperbarui data: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
     }
   }
 

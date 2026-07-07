@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sintakqu/database/db_helper.dart';
+// import 'package:sintakqu/database/db_helper.dart';
 import 'package:sintakqu/login.dart';
+import 'package:sintakqu/model/user_model.dart';
+import 'package:sintakqu/services/firebase_auth_service.dart';
+import 'package:sintakqu/services/firestore_service.dart';
 import 'package:sintakqu/view/profile/keamanan.dart';
 import 'package:sintakqu/view/profile/pengaturan_akun.dart';
 import 'package:sintakqu/view/profile/pusat_bantuan.dart';
@@ -19,9 +23,10 @@ class IndexProfile extends StatefulWidget {
 class _IndexProfileState extends State<IndexProfile> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
-
+  final FirestoreService _firestoreService = FirestoreService();
   // Menggunakan objek Future untuk menampung data gabungan
-  late Future<Map<String, dynamic>?> _ambilDataUser;
+  // late Future<Map<String, dynamic>?> _ambilDataUser;
+  late Future<UserModel> _ambilDataUser;
 
   @override
   void initState() {
@@ -31,17 +36,30 @@ class _IndexProfileState extends State<IndexProfile> {
   }
 
   // Fungsi pembantu untuk memuat data user sekalian menyiapkan file gambar
-  Future<Map<String, dynamic>?> _inisialisasiDataUser() async {
-    final data = await DbHelper().getDataLoggeduser();
-    if (data != null && data['foto_profil'] != null) {
-      String path = data['foto_profil'];
-      if (path.isNotEmpty) {
-        setState(() {
-          _imageFile = File(path); // Menetapkan nilai agar CircleAvatar sinkron
-        });
-      }
+  // Future<Map<String, dynamic>?> _inisialisasiDataUser() async {
+  //   final data = await DbHelper().getDataLoggeduser();
+  //   if (data != null && data['foto_profil'] != null) {
+  //     String path = data['foto_profil'];
+  //     if (path.isNotEmpty) {
+  //       setState(() {
+  //         _imageFile = File(path); // Menetapkan nilai agar CircleAvatar sinkron
+  //       });
+  //     }
+  //   }
+  //   return data;
+  // }
+
+  //ambil data user di firebase
+  Future<UserModel> _inisialisasiDataUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser == null) {
+      throw Exception("User belum login.");
     }
-    return data;
+
+    final user = await _firestoreService.getUser(firebaseUser.uid);
+
+    return user;
   }
 
   void _showPickerOptions(BuildContext context) {
@@ -93,23 +111,23 @@ class _IndexProfileState extends State<IndexProfile> {
           _imageFile = File(pickedFile.path);
         });
 
-        int hasilUpdate = await DbHelper().updateProfileImage(pickedFile.path);
+        // int hasilUpdate = await DbHelper().updateProfileImage(pickedFile.path);
 
         if (!mounted) return;
 
-        if (hasilUpdate > 0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Foto profil berhasil diperbarui!'),
-              backgroundColor: Colors.green,
-            ),
-          );
+        // if (hasilUpdate > 0) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     const SnackBar(
+        //       content: Text('Foto profil berhasil diperbarui!'),
+        //       backgroundColor: Colors.green,
+        //     ),
+        //   );
 
-          // 2. Refresh FutureBuilder agar sinkronisasi data internal tetap terjaga
-          setState(() {
-            _ambilDataUser = _inisialisasiDataUser();
-          });
-        }
+        //   // 2. Refresh FutureBuilder agar sinkronisasi data internal tetap terjaga
+        //   setState(() {
+        //     _ambilDataUser = _inisialisasiDataUser();
+        //   });
+        // }
       }
     } catch (e) {
       debugPrint("Gagal mengambil gambar: $e");
@@ -149,7 +167,7 @@ class _IndexProfileState extends State<IndexProfile> {
           child: Container(color: const Color(0xFFE0E3E6), height: 1.0),
         ),
       ),
-      body: FutureBuilder<Map<String, dynamic>?>(
+      body: FutureBuilder<UserModel>(
         future: _ambilDataUser,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -165,8 +183,11 @@ class _IndexProfileState extends State<IndexProfile> {
             return const Center(child: Text('Gagal memuat data profil'));
           }
 
-          final userData = snapshot.data!;
-          final String setNamaUser = userData['nama_lengkap'] ?? 'Pengguna';
+          // final userData = snapshot.data!;
+          // final String setNamaUser = userData['nama_lengkap'] ?? 'Pengguna';
+
+          final user = snapshot.data!;
+          final String setNamaUser = user.namaLengkap;
 
           return SingleChildScrollView(
             child: Column(
@@ -299,15 +320,17 @@ class _IndexProfileState extends State<IndexProfile> {
                             ),
                             SizedBox(width: 16),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PengaturanAkun(),
+                                  ),
+                                );
+
                                 setState(() {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const PengaturanAkun(),
-                                    ),
-                                  );
+                                  _ambilDataUser = _inisialisasiDataUser();
                                 });
                               },
                               child: Row(
@@ -411,93 +434,6 @@ class _IndexProfileState extends State<IndexProfile> {
                         ),
                       ),
 
-                      // Padding(
-                      //   padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
-                      //   child: Row(
-                      //     children: [
-                      //       const CircleAvatar(
-                      //         backgroundColor: Color(0x1A0050CC),
-                      //         radius: 20,
-                      //         child: Icon(
-                      //           Icons.contact_support,
-                      //           color: Color(0xFF0050CC),
-                      //         ),
-                      //       ),
-                      //       SizedBox(width: 16),
-                      //       TextButton(
-                      //         onPressed: () async {
-                      //           await DbHelper().insert20DataDummyMei();
-
-                      //           if (!context.mounted) return;
-                      //           ScaffoldMessenger.of(context).showSnackBar(
-                      //             const SnackBar(
-                      //               content: Text(
-                      //                 '20 Data Dummy Mei Berhasil Ditambahkan!',
-                      //               ),
-                      //             ),
-                      //           );
-                      //         },
-                      //         child: Row(
-                      //           children: [
-                      //             Text(
-                      //               "Insert Dummy Data",
-                      //               style: TextStyle(
-                      //                 fontSize: 16,
-                      //                 color: Color(0xFF181C1E),
-                      //               ),
-                      //             ),
-                      //             SizedBox(width: 11),
-                      //             Icon(Icons.arrow_forward_ios),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-                      // Padding(
-                      //   padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
-                      //   child: Row(
-                      //     children: [
-                      //       const CircleAvatar(
-                      //         backgroundColor: Color(0x1A0050CC),
-                      //         radius: 20,
-                      //         child: Icon(
-                      //           Icons.contact_support,
-                      //           color: Color(0xFF0050CC),
-                      //         ),
-                      //       ),
-                      //       SizedBox(width: 16),
-                      //       TextButton(
-                      //         onPressed: () async {
-                      //           await DbHelper().deleteAllTransaksiRaw();
-
-                      //           if (!context.mounted) return;
-                      //           ScaffoldMessenger.of(context).showSnackBar(
-                      //             const SnackBar(
-                      //               content: Text(
-                      //                 'tabel transaksi di kosongkan ',
-                      //               ),
-                      //             ),
-                      //           );
-                      //         },
-                      //         child: Row(
-                      //           children: [
-                      //             Text(
-                      //               "Kosongkan table transaksi",
-                      //               style: TextStyle(
-                      //                 fontSize: 16,
-                      //                 color: Color(0xFF181C1E),
-                      //               ),
-                      //             ),
-                      //             SizedBox(width: 11),
-                      //             Icon(Icons.arrow_forward_ios),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
                         child: Row(
@@ -513,16 +449,16 @@ class _IndexProfileState extends State<IndexProfile> {
                             SizedBox(width: 16),
                             TextButton(
                               onPressed: () async {
-                                await DbHelper().logoutUser();
-                                if (context.mounted) {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (context) => const Login(),
-                                    ),
-                                    (Route<dynamic> route) =>
-                                        false, // Menghapus semua halaman sebelumnya dari stack
-                                  );
-                                }
+                                await FirebaseAuthService().logout();
+                                if (!context.mounted) return;
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Login(),
+                                  ),
+                                  (route) => false,
+                                );
                               },
                               child: Row(
                                 children: [

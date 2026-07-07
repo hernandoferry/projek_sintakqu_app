@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:sintakqu/database/db_helper.dart';
-import 'package:sintakqu/model/transaksi_model.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
+import 'package:sintakqu/model/user_model.dart';
+import 'package:sintakqu/services/firestore_service.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 
 class Branda extends StatefulWidget {
   const Branda({super.key});
@@ -13,7 +16,7 @@ class Branda extends StatefulWidget {
 }
 
 class _BrandaState extends State<Branda> {
-  late Future<Map<String, dynamic>?> _ambilDataUserLogin;
+  late Future<UserModel> _ambilDataUserLogin;
   late Future<Map<String, double>> _ambilRekapPengeluaran;
   late Future<List<Map<String, dynamic>>> _ambilStatistikChart;
   bool _nominalPengeluaran = true;
@@ -42,7 +45,8 @@ class _BrandaState extends State<Branda> {
   }
 
   void tampilkanPengeluaranTerakhir(BuildContext context) async {
-    final dbData = await DbHelper().getLastDuapuluhPengeluaranTerakhir();
+    // final dbData = await DbHelper().getLastDuapuluhPengeluaranTerakhir();
+    final listTransaksi = await TransaksiService().get20TransaksiTerakhir();
     if (!context.mounted) return;
     showModalBottomSheet(
       context: context,
@@ -105,15 +109,15 @@ class _BrandaState extends State<Branda> {
                     color: Color(0xFFF0F0F0),
                   ),
                   Expanded(
-                    child: dbData.isEmpty
+                    child: listTransaksi.isEmpty
                         ? const Center(child: Text("Belum ada data transaksi."))
                         : ListView.builder(
                             controller: scrollController,
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            itemCount: dbData.length,
+                            itemCount: listTransaksi.length,
                             itemBuilder: (context, index) {
-                              final data = dbData[index];
-                              final transaksi = TransaksiModel.fromMap(data);
+                              // tampung listtransaksi
+                              final transaksi = listTransaksi[index];
 
                               String tanggalStr =
                                   "${transaksi.createdAt.day} ${_namaBulan(transaksi.createdAt.month)} ${transaksi.createdAt.year}";
@@ -173,9 +177,11 @@ class _BrandaState extends State<Branda> {
   @override
   void initState() {
     super.initState();
-    _ambilDataUserLogin = DbHelper().getDataLoggeduser();
-    _ambilRekapPengeluaran = DbHelper().ambilRekapPengeluaran();
-    _ambilStatistikChart = DbHelper().ambilStatistik7Hari();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    _ambilDataUserLogin = FirestoreService().getUser(uid);
+    _ambilStatistikChart = TransaksiService().ambilStatistik7Hari();
+    _ambilRekapPengeluaran = TransaksiService().ambilRekapPengeluaran();
   }
 
   @override
@@ -195,19 +201,25 @@ class _BrandaState extends State<Branda> {
                 snapshot.data == null) {
               return const Text('Gagal memuat data');
             }
-            final userData = snapshot.data!;
-            final String namaUser = userData['nama_lengkap'] ?? 'Pengguna';
-            final String imagePath = userData['foto_profil'] ?? '';
+            final user = snapshot.data!;
+
+            final String namaUser = user.namaLengkap;
+            // final String imagePath = user.fotoProfil ?? '';
             return Row(
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage:
-                      imagePath.isNotEmpty && File(imagePath).existsSync()
-                      ? FileImage(File(imagePath))
-                      : const AssetImage("assets/images/user_dummy.png")
-                            as ImageProvider,
+                  backgroundColor: const Color(0xFFE8F0FE),
+                  backgroundImage: (user.fotoProfil?.isNotEmpty ?? false)
+                      ? FileImage(File(user.fotoProfil!))
+                      : null,
+                  child: (user.fotoProfil?.isEmpty ?? true)
+                      ? const Icon(
+                          Icons.person,
+                          color: Color(0xFF0050CC),
+                          size: 28,
+                        )
+                      : null,
                 ),
 
                 Padding(
@@ -802,8 +814,9 @@ class _BrandaState extends State<Branda> {
                             ),
                           ),
 
-                          FutureBuilder<List<TransaksiModel>>(
-                            future: DbHelper().getDuaPengeluaranTerakhir(),
+                          FutureBuilder<List<TransaksiCloudModel>>(
+                            future: TransaksiService()
+                                .getDuaTransaksiTerakhir(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -858,7 +871,6 @@ class _BrandaState extends State<Branda> {
                                         ),
                                         const SizedBox(width: 12),
 
-                                        // 💡 1. Bungkus Column ini dengan Expanded agar tahu batas maksimal lebar layar
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -868,7 +880,7 @@ class _BrandaState extends State<Branda> {
                                                 transaksi.keterangan.length > 25
                                                     ? '${transaksi.keterangan.substring(0, 22)}...'
                                                     : transaksi.keterangan,
-                                                // 💡 2. Tambahkan properti ini agar teks memotong rapi jika masih mentok
+                                                // Tambahkan properti ini agar teks memotong rapi jika masih mentok
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(

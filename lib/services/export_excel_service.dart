@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
 
 class ExportExcelService {
   static Future<File> generateExcel(
-    List<Map<String, dynamic>> data,
+    List<TransaksiCloudModel> data,
     String namaBulan,
   ) async {
     var excel = Excel.createExcel();
@@ -22,13 +23,13 @@ class ExportExcelService {
     double total = 0;
 
     for (var item in data) {
-      total += (item['nominal'] as num).toDouble();
+      total += (item.nilaiTransaksi as num).toDouble();
 
       sheet.appendRow([
-        TextCellValue(item['created_at'].toString()),
-        TextCellValue(item['kategori'].toString()),
-        DoubleCellValue((item['nominal'] as num).toDouble()),
-        TextCellValue(item['keterangan'] ?? '-'),
+        TextCellValue(item.createdAt.toString()),
+        TextCellValue(item.kategoriTrans.toString()),
+        DoubleCellValue((item.nilaiTransaksi as num).toDouble()),
+        TextCellValue(item.keterangan),
       ]);
     }
 
@@ -50,6 +51,10 @@ class ExportExcelService {
     }
 
     final file = File('${laporanDir.path}/SintakQu_Laporan_$namaBulan.xlsx');
+
+    final bytes = excel.encode();
+
+    await file.writeAsBytes(bytes!);
 
     return file;
   }

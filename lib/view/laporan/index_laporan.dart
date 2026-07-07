@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sintakqu/database/db_helper.dart';
+// import 'package:sintakqu/database/db_helper.dart';
 import 'package:sintakqu/helpers/edit_transaksi_helper.dart';
 import 'package:sintakqu/helpers/state_pencarian_helper.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 import 'package:sintakqu/view/laporan/bulanan_laporan.dart';
 import 'package:sintakqu/view/laporan/tahunan_laporan.dart';
 
@@ -16,7 +18,8 @@ class IndexLaporan extends StatefulWidget {
 class _IndexLaporanState extends State<IndexLaporan> {
   // 1. Inisialisasi controller dan penampung data di atas override build
   final TextEditingController _dateController = TextEditingController();
-  List<Map<String, dynamic>> _hasilPencarian = [];
+  List<TransaksiCloudModel> _hasilPencarian = [];
+  // List<Map<String, dynamic>> _hasilPencarian = [];
 
   // 2. Fungsi saat TextField di-tap
   Future<void> _pilihTanggal(BuildContext context) async {
@@ -35,7 +38,8 @@ class _IndexLaporanState extends State<IndexLaporan> {
       String formatUi = DateFormat('dd-MM-yyyy').format(picked);
 
       // Ambil data dari database Sqflite
-      final data = await DbHelper().cariTransaksiMulaiTanggal(formatDb);
+      // final data = await DbHelper().cariTransaksiMulaiTanggal(formatDb);
+      final data = await TransaksiService().cariTransaksiByTanggal(picked);
 
       setState(() {
         _dateController.text = formatUi;
@@ -242,10 +246,12 @@ class _IndexLaporanState extends State<IndexLaporan> {
                     itemCount: _hasilPencarian.length,
                     itemBuilder: (context, index) {
                       final transaksi = _hasilPencarian[index];
-                      final bool isPengeluaran =
-                          transaksi['jenis'] == 'pengeluaran';
+                      // final bool isPengeluaran =
+                      // transaksi['jenis'] == 'pengeluaran';
                       final double nominal =
-                          double.tryParse(transaksi['nominal'].toString()) ??
+                          double.tryParse(
+                            transaksi.nilaiTransaksi.toString(),
+                          ) ??
                           0.0;
 
                       // Format angka nominal menjadi Rp 150.000
@@ -268,19 +274,13 @@ class _IndexLaporanState extends State<IndexLaporan> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: isPengeluaran
-                                    ? const Color(0xFFFFEBEE)
-                                    : const Color(0xFFE8F5E9),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFFEBEE),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
-                                isPengeluaran
-                                    ? Icons.arrow_outward
-                                    : Icons.south_west,
-                                color: isPengeluaran
-                                    ? Colors.red
-                                    : Colors.green,
+                              child: const Icon(
+                                Icons.arrow_outward,
+                                color: Colors.red,
                                 size: 20,
                               ),
                             ),
@@ -291,8 +291,7 @@ class _IndexLaporanState extends State<IndexLaporan> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    transaksi['keterangan'] ??
-                                        'Tanpa Keterangan',
+                                    transaksi.keterangan,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -301,7 +300,7 @@ class _IndexLaporanState extends State<IndexLaporan> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    transaksi['kategori'] ?? 'Umum',
+                                    transaksi.kategoriTrans,
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Color(0xFF8E8E93),
@@ -316,7 +315,7 @@ class _IndexLaporanState extends State<IndexLaporan> {
                               children: [
                                 // Nominal Transaksi (Warna diubah dinamis: Merah untuk pengeluaran, Hijau untuk pemasukan)
                                 Text(
-                                  "${isPengeluaran ? '-' : '-'} Rp $formatUang",
+                                  "- Rp $formatUang",
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -348,22 +347,22 @@ class _IndexLaporanState extends State<IndexLaporan> {
                                         transaksi: transaksi,
                                         onSaved: () async {
                                           // Fungsi penyegaran otomatis setelah data disimpan
-                                          String formatDb =
-                                              DateFormat('yyyy-MM-dd').format(
-                                                DateFormat(
-                                                  'dd-MM-yyyy',
-                                                ).parse(_dateController.text),
-                                              );
+                                          final picked = DateFormat(
+                                            'dd-MM-yyyy',
+                                          ).parse(_dateController.text);
 
-                                          final dataTerbaru = await DbHelper()
-                                              .cariTransaksiMulaiTanggal(
-                                                formatDb,
-                                              );
+                                          final dataTerbaru =
+                                              await TransaksiService()
+                                                  .cariTransaksiByTanggal(
+                                                    picked,
+                                                  );
 
                                           setState(() {
                                             _hasilPencarian = dataTerbaru;
                                           });
+
                                           if (!context.mounted) return;
+
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -434,24 +433,19 @@ class _IndexLaporanState extends State<IndexLaporan> {
                                                 Navigator.pop(dialogContext);
 
                                                 // Pastikan nama kolom 'id' sesuai dengan primary key di database Anda
-                                                await DbHelper().hapusTransaksi(
-                                                  transaksi['id'],
-                                                );
-
-                                                String formatDb =
-                                                    DateFormat(
-                                                      'yyyy-MM-dd',
-                                                    ).format(
-                                                      DateFormat(
-                                                        'dd-MM-yyyy',
-                                                      ).parse(
-                                                        _dateController.text,
-                                                      ),
+                                                await TransaksiService()
+                                                    .hapusTransaksi(
+                                                      transaksi.id,
                                                     );
+
+                                                final picked = DateFormat(
+                                                  'dd-MM-yyyy',
+                                                ).parse(_dateController.text);
+
                                                 final dataTerbaru =
-                                                    await DbHelper()
-                                                        .cariTransaksiMulaiTanggal(
-                                                          formatDb,
+                                                    await TransaksiService()
+                                                        .cariTransaksiByTanggal(
+                                                          picked,
                                                         );
 
                                                 setState(() {

@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:sintakqu/database/db_helper.dart';
 import 'package:sintakqu/services/export_excel_service.dart';
 import 'package:sintakqu/services/export_pdf_service.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 import 'package:sintakqu/view/laporan/detail_kategori_laporan.dart';
 
 class BulananLaporan extends StatefulWidget {
@@ -135,9 +135,8 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               navigator.pop();
 
                               try {
-                                final data = await DbHelper().getLaporanBulanan(
-                                  bulanTerpilih + 1,
-                                );
+                                final data = await TransaksiService()
+                                    .getLaporanBulanan(bulanTerpilih + 1);
 
                                 final file = await ExportPdfService.generatePdf(
                                   data,
@@ -196,9 +195,8 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               navigator.pop();
 
                               try {
-                                final data = await DbHelper().getLaporanBulanan(
-                                  bulanTerpilih + 1,
-                                );
+                                final data = await TransaksiService()
+                                    .getLaporanBulanan(bulanTerpilih + 1);
 
                                 if (data.isEmpty) {
                                   if (!mounted) return;
@@ -326,10 +324,13 @@ class _BulananLaporanState extends State<BulananLaporan> {
             FutureBuilder<List<double>>(
               // Mengambil 2 data sekaligus: [Bulan Ini, Bulan Lalu]
               future: Future.wait([
-                DbHelper().getTotalPengeluaranBulan(bulanTerpilih + 1),
-                DbHelper().getTotalPengeluaranBulan(
-                  bulanTerpilih,
-                ), // Bulan lalu (tanpa +1)
+                TransaksiService().getTotalPengeluaranBulan(bulanTerpilih + 1),
+
+                bulanTerpilih == 0
+                    ? Future.value(0.0)
+                    : TransaksiService().getTotalPengeluaranBulan(
+                        bulanTerpilih,
+                      ),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -470,7 +471,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
               child: SizedBox(
                 height: 180,
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: DbHelper().getTrendPengeluaranHanyaYangAda(),
+                  future: TransaksiService().getTrendPengeluaranHanyaYangAda(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -489,6 +490,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
                     }
 
                     double tertinggi = 0.0;
+
                     for (var row in dataList) {
                       double total = (row['total'] as num).toDouble();
                       if (total > tertinggi) tertinggi = total;
@@ -547,7 +549,6 @@ class _BulananLaporanState extends State<BulananLaporan> {
                           bottomTitles: AxisTitles(
                             sideTitles: SideTitles(
                               showTitles: true,
-                              // HAPUS parameter meta jika versi lama Anda menolaknya
                               getTitlesWidget: (double value, TitleMeta meta) {
                                 int index = value.toInt();
                                 if (index >= 0 && index < dataList.length) {
@@ -555,7 +556,6 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                     dataList[index]['bulan_angka'].toString(),
                                   );
 
-                                  // Gunakan Padding biasa sebagai pengganti SideTitleWidget
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 6.0),
                                     child: Text(
@@ -585,8 +585,8 @@ class _BulananLaporanState extends State<BulananLaporan> {
                               BarChartRodData(
                                 toY: total,
                                 color: bulanAngka == bulanSekarangString
-                                    ? const Color(0XFF0050CC)
-                                    : const Color(0X4D0050CC),
+                                    ? const Color(0X4D0050CC)
+                                    : const Color(0XFF0050CC),
                                 width: 16,
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -613,7 +613,7 @@ class _BulananLaporanState extends State<BulananLaporan> {
             ),
             SizedBox(height: 4),
             FutureBuilder<List<Map<String, dynamic>>>(
-              future: DbHelper().getPengeluaranPerKategoriBulan(
+              future: TransaksiService().getPengeluaranPerKategoriBulan(
                 bulanTerpilih + 1,
               ),
               builder: (context, snapshot) {
@@ -683,10 +683,8 @@ class _BulananLaporanState extends State<BulananLaporan> {
                       }
                     }
 
-                    // ✨ DI SINI TEMPAT TERBAIK UNTUK MENAMBAHKAN INKWELL
                     return Material(
-                      color: Colors
-                          .transparent, // Menjaga latar belakang widget tetap bersih
+                      color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
                           // Pindah ke halaman detail sambil membawa data kategori dan bulan terpilih

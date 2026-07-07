@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sintakqu/database/db_helper.dart';
 import 'package:sintakqu/model/transaksi_model.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 
 class Transaksi extends StatefulWidget {
   const Transaksi({super.key});
@@ -23,6 +23,9 @@ class _TransaksiState extends State<Transaksi> {
   String? selected;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+
+  //init transaksi service
+  final TransaksiService _transaksiService = TransaksiService();
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -66,7 +69,20 @@ class _TransaksiState extends State<Transaksi> {
       updatedAt: DateTime.now(),
     );
 
-    await DbHelper().tambahTransaksi(buatTransaksi.toMap());
+    // await DbHelper().tambahTransaksi(buatTransaksi.toMap());
+    //simpan data transaksi ke firebase
+    await _transaksiService.tambahTransaksi(buatTransaksi);
+
+    ///cek transaksi bisa dihapus nanti kalo sudah fix
+    final semuaTransaksi = await _transaksiService.getSemuaTransaksi();
+
+    for (final trx in semuaTransaksi) {
+      debugPrint(
+        "${trx.kategoriTrans} | ${trx.nilaiTransaksi} | ${trx.keterangan}",
+      );
+    }
+
+    ///end cek transaksi bisa dihapus nanti kalo sudah fix
 
     //menghindari aplikasi crash jika user tiba-tiba keluar sedangkan proses penyimpanan belum selesai.
     if (!mounted) return;

@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sintakqu/database/db_helper.dart'; // Tambahkan import database
 import 'package:sintakqu/login.dart';
+import 'package:sintakqu/services/firebase_auth_service.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -294,21 +294,15 @@ class _RegisterState extends State<Register> {
 
   void _prosesDaftarUser() async {
     if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> dataRegistrasi = {
-        'nama_lengkap': _namaController.text.trim(),
-        'email': _emailController.text.trim(),
-        'no_hp': _noHpController.text.trim(),
-        'password': _passwordController.text,
-        'is_login': 0,
-        'status': 'aktif',
-      };
+      try {
+        await FirebaseAuthService().register(
+          namaLengkap: _namaController.text.trim(),
+          email: _emailController.text.trim(),
+          noHp: _noHpController.text.trim(),
+          password: _passwordController.text,
+        );
 
-      int hasil = await DbHelper().registrasiUser(dataRegistrasi);
-
-      if (hasil == -1) {
-        _notifikasiPesan('Alamat Email ini sudah terdaftar!', Colors.red);
-      } else if (hasil > 0) {
-        _notifikasiPesan('Pendaftaran Berhasil! Silakan masuk.', Colors.green);
+        _notifikasiPesan('Registrasi Firebase berhasil.', Colors.green);
 
         if (!mounted) return;
 
@@ -316,11 +310,53 @@ class _RegisterState extends State<Register> {
           context,
           MaterialPageRoute(builder: (context) => const Login()),
         );
-      } else {
-        _notifikasiPesan('Pendaftaran gagal, sistem error.', Colors.orange);
+      } catch (e) {
+        _notifikasiPesan(e.toString(), Colors.red);
       }
     }
   }
+  // void _prosesDaftarUser() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     // Map<String, dynamic> dataRegistrasi = {
+  //     //   'nama_lengkap': _namaController.text.trim(),
+  //     //   'email': _emailController.text.trim(),
+  //     //   'no_hp': _noHpController.text.trim(),
+  //     //   'password': _passwordController.text,
+  //     //   'is_login': 0,
+  //     //   'status': 'aktif',
+  //     // };
+
+  //     // int hasil = await DbHelper().registrasiUser(dataRegistrasi); save to sqflite sementara di offkan dulu
+
+  //     //diganti dengan firebase
+  //     try {
+  //       await FirebaseAuthService().register(
+  //         email: _emailController.text.trim(),
+  //         password: _passwordController.text,
+  //       );
+
+  //       _notifikasiPesan('Registrasi Firebase berhasil.', Colors.green);
+  //     } catch (e) {
+  //       _notifikasiPesan(e.toString(), Colors.red);
+  //     }
+
+  //     // if (hasil == -1) {
+  //     //   _notifikasiPesan('Alamat Email ini sudah terdaftar!', Colors.red);
+  //     // } else if (hasil > 0) {
+  //     //   _notifikasiPesan('Pendaftaran Berhasil! Silakan masuk.', Colors.green);
+
+  //       if (!mounted) return;
+
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => const Login()),
+  //       );
+  //     } else {
+  //       Text('boom');
+  //       // _notifikasiPesan('Pendaftaran gagal, sistem error.', Colors.orange);
+  //     }
+  //   }
+  // }
 
   void _notifikasiPesan(String pesan, Color warna) {
     ScaffoldMessenger.of(

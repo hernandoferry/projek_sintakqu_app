@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 
 class EditTransaksiHelper extends StatefulWidget {
-  final Map<String, dynamic> transaksi;
+  final TransaksiCloudModel transaksi;
   final Function()
   onSaved; // Callback untuk me-refresh data di halaman utama setelah simpan
 
@@ -30,17 +31,16 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
   @override
   void initState() {
     super.initState();
-    // Inisialisasi data lama dari widget utama
-    txtKeterangan = TextEditingController(
-      text: widget.transaksi['keterangan'].toString(),
-    );
-    txtKategori = TextEditingController(
-      text: widget.transaksi['kategori'].toString(),
-    );
+
+    txtKeterangan = TextEditingController(text: widget.transaksi.keterangan);
+
+    txtKategori = TextEditingController(text: widget.transaksi.kategoriTrans);
+
     txtNominal = TextEditingController(
-      text: widget.transaksi['nominal'].toString(),
+      text: widget.transaksi.nilaiTransaksi.toString(),
     );
-    gambarPathTerpilih = widget.transaksi['gambar']?.toString();
+
+    gambarPathTerpilih = widget.transaksi.fotoStruk ?? "";
   }
 
   @override
@@ -181,12 +181,12 @@ class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
                 ),
                 onPressed: () async {
                   // Menggunakan DbHelper dari import database Anda
-                  await DbHelper().updateTransaksi(
-                    int.parse(widget.transaksi['id'].toString()),
-                    txtKeterangan.text,
-                    txtKategori.text,
-                    double.tryParse(txtNominal.text) ?? 0.0,
-                    gambarPathTerpilih,
+                  await TransaksiService().updateTransaksi(
+                    id: widget.transaksi.id,
+                    keterangan: txtKeterangan.text,
+                    kategori: txtKategori.text,
+                    nominal: double.tryParse(txtNominal.text) ?? 0,
+                    gambar: gambarPathTerpilih,
                   );
 
                   if (!context.mounted) {

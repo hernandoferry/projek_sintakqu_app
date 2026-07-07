@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sintakqu/database/db_helper.dart';
 import 'package:sintakqu/register.dart';
+import 'package:sintakqu/services/firebase_auth_service.dart';
+import 'package:sintakqu/services/firestore_service.dart';
 import 'package:sintakqu/view/home/index_home.dart';
 
 class Login extends StatefulWidget {
@@ -242,51 +244,135 @@ class _LoginState extends State<Login> {
                               );
 
                               try {
-                                bool isLoginSukses = await DbHelper().cekLogin(
-                                  emailInput,
-                                  passwordInput,
+                                //paggil firebase auth login
+                                await FirebaseAuthService().login(
+                                  email: emailInput,
+                                  password: passwordInput,
                                 );
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
 
-                                if (isLoginSukses) {
+                                final uid =
+                                    FirebaseAuth.instance.currentUser!.uid;
+                                final user = await FirestoreService().getUser(
+                                  uid,
+                                );
+
+                                final status = user.status;
+
+                                if (status != 'aktif') {
                                   if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Login Berhasil!'),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                  if (!context.mounted) return;
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const IndexHome(),
-                                    ),
-                                  );
-                                } else {
-                                  if (!context.mounted) return;
+
+                                  Navigator.pop(context);
+
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Email atau Kata Sandi salah!',
+                                        'Akun Anda belum aktif. Silakan hubungi administrator.',
                                       ),
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: Colors.orange,
                                     ),
                                   );
+
+                                  return;
                                 }
-                              } catch (e) {
+
+                                // ===== Login berhasil =====
+
                                 if (!context.mounted) return;
+
                                 Navigator.pop(context);
 
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Terjadi kesalahan database: $e',
-                                    ),
-                                    backgroundColor: Colors.orange,
+                                  const SnackBar(
+                                    content: Text('Login berhasil'),
+                                    backgroundColor: Colors.green,
                                   ),
                                 );
+
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const IndexHome(),
+                                  ),
+                                );
+
+                                // bool isLoginSukses = await DbHelper().cekLogin(
+                                //   emailInput,
+                                //   passwordInput,
+                                // );
+
+                                // if (!context.mounted) return;
+                                // Navigator.pop(context);
+
+                                // if (isLoginSukses) {
+                                //   if (!context.mounted) return;
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text('Login Berhasil!'),
+                                //       backgroundColor: Colors.green,
+                                //     ),
+                                //   );
+                                //   if (!context.mounted) return;
+                                //   Navigator.pushReplacement(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => const IndexHome(),
+                                //     ),
+                                //   );
+                                // } else {
+                                //   if (!context.mounted) return;
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text(
+                                //         'Email atau Kata Sandi salah!',
+                                //       ),
+                                //       backgroundColor: Colors.red,
+                                //     ),
+                                //   );
+                                // }
+                              } on FirebaseAuthException catch (e) {
+                                String pesan = "Login gagal";
+
+                                switch (e.code) {
+                                  case "invalid-credential":
+                                    pesan = "Email atau password salah.";
+                                    break;
+
+                                  case "user-not-found":
+                                    pesan = "Akun tidak ditemukan.";
+                                    break;
+
+                                  case "wrong-password":
+                                    pesan = "Password salah.";
+                                    break;
+
+                                  case "network-request-failed":
+                                    pesan = "Tidak ada koneksi internet.";
+                                    break;
+
+                                  default:
+                                    pesan = e.message ?? "Terjadi kesalahan.";
+                                }
+                                if (!context.mounted) return;
+
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(pesan),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+
+                                // if (!context.mounted) return;
+                                // Navigator.pop(context);
+
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(
+                                //     content: Text(
+                                //       'Terjadi kesalahan database: $e',
+                                //     ),
+                                //     backgroundColor: Colors.orange,
+                                //   ),
+                                // );
                               }
                             }
                           },

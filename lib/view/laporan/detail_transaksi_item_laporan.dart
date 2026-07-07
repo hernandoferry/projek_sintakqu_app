@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:sintakqu/database/db_helper.dart';
+import 'package:sintakqu/model/transaksi_cloud_model.dart';
+import 'package:sintakqu/services/transaksi_service.dart';
 import 'package:sintakqu/view/laporan/detail_gambar.dart';
 
 class DetailTransaksiItemLaporan extends StatefulWidget {
-  final int transaksiId;
+  final String transaksiId;
 
   const DetailTransaksiItemLaporan({super.key, required this.transaksiId});
 
@@ -62,8 +63,8 @@ class _DetailTransaksiItemLaporanState
           child: Container(height: 1, color: const Color(0xFFE0E3E6)),
         ),
       ),
-      body: FutureBuilder(
-        future: DbHelper().getTransaksiById(widget.transaksiId),
+      body: FutureBuilder<TransaksiCloudModel?>(
+        future: TransaksiService().getTransaksiById(widget.transaksiId),
         builder: (context, snapshot) {
           /// Loading
           if (snapshot.connectionState == ConnectionState.waiting) {
