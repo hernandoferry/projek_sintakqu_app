@@ -32,7 +32,7 @@ class _IndexLaporanState extends State<IndexLaporan> {
 
     if (picked != null) {
       // Ubah tanggal ke format SQLite (YYYY-MM-DD)
-      String formatDb = DateFormat('yyyy-MM-dd').format(picked);
+      // String formatDb = DateFormat('yyyy-MM-dd').format(picked);
 
       // Ubah tanggal ke format UI TextField (DD-MM-YYYY)
       String formatUi = DateFormat('dd-MM-yyyy').format(picked);
