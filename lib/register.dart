@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sintakqu/login.dart';
 import 'package:sintakqu/services/firebase_auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -20,6 +21,8 @@ class _RegisterState extends State<Register> {
   final TextEditingController _noHpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true; // Status awal password disembunyikan
+  bool _isLoading = false;
+  bool _setujuTerm = false;
 
   @override
   void dispose() {
@@ -30,6 +33,14 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
+  Future<void> _bukaLink(String url) async {
+    final uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Tidak dapat membuka halaman.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +48,7 @@ class _RegisterState extends State<Register> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 80),
+            const SizedBox(height: 40),
             Center(
               child: Image.asset(
                 "assets/images/icon_register.png",
@@ -231,6 +242,73 @@ class _RegisterState extends State<Register> {
                     ),
 
                     const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: _setujuTerm,
+                            activeColor: const Color(0xFF0050CC),
+                            onChanged: (value) {
+                              setState(() {
+                                _setujuTerm = value ?? false;
+                              });
+                            },
+                          ),
+
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black87,
+                                  ),
+                                  children: [
+                                    const TextSpan(
+                                      text:
+                                          "Saya telah membaca dan menyetujui ",
+                                    ),
+
+                                    TextSpan(
+                                      text: "Syarat & Ketentuan",
+                                      style: const TextStyle(
+                                        color: Color(0xFF0050CC),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _bukaLink(
+                                            "https://docs.google.com/document/d/1qZNkzrzM73pUhuhA_ic1NQU1MQ9IGKpo14866We3xNk/edit?usp=sharing",
+                                          );
+                                        },
+                                    ),
+
+                                    const TextSpan(text: " serta "),
+
+                                    TextSpan(
+                                      text: "Kebijakan Privasi",
+                                      style: const TextStyle(
+                                        color: Color(0xFF0050CC),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _bukaLink(
+                                            "https://docs.google.com/document/d/1qZNkzrzM73pUhuhA_ic1NQU1MQ9IGKpo14866We3xNk/edit?usp=sharing",
+                                          );
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -242,15 +320,39 @@ class _RegisterState extends State<Register> {
                           ),
                           backgroundColor: Colors.blue,
                         ),
-                        onPressed: _prosesDaftarUser,
-                        child: const Text(
-                          'DAFTAR SEKARANG',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
+
+                        onPressed: _isLoading ? null : _prosesDaftarUser,
+
+                        child: _isLoading
+                            ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Mendaftarkan...",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const Text(
+                                "DAFTAR SEKARANG",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -293,25 +395,45 @@ class _RegisterState extends State<Register> {
   }
 
   void _prosesDaftarUser() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await FirebaseAuthService().register(
-          namaLengkap: _namaController.text.trim(),
-          email: _emailController.text.trim(),
-          noHp: _noHpController.text.trim(),
-          password: _passwordController.text,
-        );
+    if (!_formKey.currentState!.validate()) return;
 
-        _notifikasiPesan('Registrasi Firebase berhasil.', Colors.green);
+    if (!_setujuTerm) {
+      _notifikasiPesan(
+        "Silakan menyetujui Syarat & Ketentuan terlebih dahulu.",
+        Colors.orange,
+      );
+      return;
+    }
 
-        if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+    });
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Login()),
-        );
-      } catch (e) {
-        _notifikasiPesan(e.toString(), Colors.red);
+    try {
+      await FirebaseAuthService().register(
+        namaLengkap: _namaController.text.trim(),
+        email: _emailController.text.trim(),
+        noHp: _noHpController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      _notifikasiPesan('Registrasi Firebase berhasil.', Colors.green);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      _notifikasiPesan(e.toString(), Colors.red);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }

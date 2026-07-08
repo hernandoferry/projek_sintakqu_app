@@ -19,20 +19,9 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // Fungsi inisialisasi untuk memastikan SplashScreen berdurasi minimal 2 detik
-  // Future<bool> _inisialisasiAplikasi() async {
-  //   // final hasilCekLogin = DbHelper().cekStatusLogin();
-  //   // final jedaWaktu = Future.delayed(const Duration(seconds: 2));
-  //   // final hasil = await Future.wait([hasilCekLogin, jedaWaktu]);
-
-  //   // // Kembalikan hasil status login (elemen pertama dari hasil Future.wait)
-  //   // return hasil[0] as bool;
-
-  // }
-
   Future<bool> _inisialisasiAplikasi() async {
-    // Splash minimal 2 detik
-    await Future.delayed(const Duration(seconds: 2));
+    // Splash minimal 4 detik
+    await Future.delayed(const Duration(seconds: 3));
 
     // Cek session Firebase
     return FirebaseAuth.instance.currentUser != null;
