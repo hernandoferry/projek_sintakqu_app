@@ -89,9 +89,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     padding: EdgeInsetsGeometry.only(bottom: 14.0),
                     child: Text(
                       'Versi : Beta',
-                      style: TextStyle(color: Color(0xFFC5C6CF)),
+                      style: TextStyle(color: Color(0xFF44474E)),
                     ),
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
