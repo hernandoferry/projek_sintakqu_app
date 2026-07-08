@@ -447,4 +447,39 @@ class TransaksiService {
 
     return hasil;
   }
+
+  Future<List<Map<String, dynamic>>> getKategoriTahunan() async {
+    final now = DateTime.now();
+
+    final snapshot = await _transaksiRef.get();
+
+    final Map<String, double> kategoriMap = {};
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+
+      final createdAt = (data['created_at'] as Timestamp).toDate();
+
+      if (createdAt.year != now.year) continue;
+
+      final kategori = data['kategori'] as String;
+      final nominal = (data['nominal'] as num).toDouble();
+
+      kategoriMap.update(
+        kategori,
+        (value) => value + nominal,
+        ifAbsent: () => nominal,
+      );
+    }
+
+    final hasil = kategoriMap.entries
+        .map((e) => {"kategori": e.key, "total": e.value})
+        .toList();
+
+    hasil.sort(
+      (a, b) => (b["total"] as double).compareTo(a["total"] as double),
+    );
+
+    return hasil;
+  }
 }

@@ -13,6 +13,7 @@ class TahunanLaporan extends StatefulWidget {
 class _TahunanLaporanState extends State<TahunanLaporan> {
   late Future<double> _totalTahunan;
   late Future<List<Map<String, dynamic>>> _trendTahunan;
+  late Future<List<Map<String, dynamic>>> _kategoriTahunan;
 
   @override
   void initState() {
@@ -20,41 +21,9 @@ class _TahunanLaporanState extends State<TahunanLaporan> {
 
     _totalTahunan = TransaksiService().getTotalPengeluaranTahunan();
     _trendTahunan = TransaksiService().getTrendPengeluaranTahunan();
+    _kategoriTahunan = TransaksiService().getKategoriTahunan();
   }
 
-  //dummy data untuk kategori pengeluaran bulanan
-  final List<Map<String, dynamic>> dataKategori = [
-    {
-      "nama": "Kuliner",
-      "nominal": "Rp 500.000",
-      "icon": Icons.restaurant,
-      "progress": 0.5,
-    },
-    {
-      "nama": "Transportasi",
-      "nominal": "Rp 350.000",
-      "icon": Icons.directions_car,
-      "progress": 0.35,
-    },
-    {
-      "nama": "Belanja",
-      "nominal": "Rp 1.200.000",
-      "icon": Icons.shopping_bag,
-      "progress": 0.85,
-    },
-    {
-      "nama": "Tagihan & Listrik",
-      "nominal": "Rp 850.000",
-      "icon": Icons.electric_bolt,
-      "progress": 0.6,
-    },
-    {
-      "nama": "Hiburan",
-      "nominal": "Rp 200.000",
-      "icon": Icons.movie,
-      "progress": 0.2,
-    },
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -317,81 +286,157 @@ class _TahunanLaporanState extends State<TahunanLaporan> {
               ),
             ),
 
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: dataKategori.length,
-              itemBuilder: (context, index) {
-                final item = dataKategori[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE0E3E6)),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _kategoriTahunan,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final data = snapshot.data ?? [];
+
+                if (data.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        "Belum ada data kategori.",
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
+                  );
+                }
+
+                double totalSemua = 0;
+
+                for (final item in data) {
+                  totalSemua += (item['total'] as num).toDouble();
+                }
+
+                IconData getIcon(String kategori) {
+                  switch (kategori) {
+                    case 'Belanja Bulanan':
+                      return Icons.shopping_basket;
+                    case 'E-Commerce & Belanja':
+                      return Icons.shopping_bag;
+                    case 'Hiburan & Gaya Hidup':
+                      return Icons.movie;
+                    case 'Internet & Komunikasi':
+                      return Icons.language;
+                    case 'Kesehatan':
+                      return Icons.local_hospital;
+                    case 'Kuliner & Makanan':
+                      return Icons.restaurant;
+                    case 'Pendidikan':
+                      return Icons.school;
+                    case 'Sosial & Donasi':
+                      return Icons.volunteer_activism;
+                    case 'Tagihan Rumah Tangga':
+                      return Icons.electric_bolt;
+                    case 'Transportasi':
+                      return Icons.directions_car;
+                    default:
+                      return Icons.wallet;
+                  }
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+
+                    final kategori = item["kategori"];
+
+                    final nominal = (item["total"] as num).toDouble();
+                    final double progress = totalSemua == 0
+                        ? 0.0
+                        : (nominal / totalSemua).toDouble();
+                    // final progress = totalSemua == 0 ? 0 : nominal / totalSemua;
+
+                    final format = NumberFormat.currency(
+                      locale: 'id_ID',
+                      symbol: 'Rp ',
+                      decimalDigits: 0,
+                    );
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE0E3E6)),
+                        ),
+                        child: Column(
                           children: [
-                            CircleAvatar(
-                              radius: 24,
-                              backgroundColor: const Color(0XFF001A41),
-                              child: Icon(
-                                item["icon"],
-                                color: const Color(0xFFFFFFFF),
-                                size: 24,
-                              ),
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: const Color(0XFF001A41),
+                                  child: Icon(
+                                    getIcon(kategori),
+                                    color: Colors.white,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          kategori,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+
+                                      Text(
+                                        format.format(nominal),
+                                        style: const TextStyle(
+                                          color: Color(0XFF001A41),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    item["nama"],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF212121),
-                                    ),
-                                  ),
-                                  Text(
-                                    item["nominal"],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF001A41),
-                                    ),
-                                  ),
-                                ],
+
+                            const SizedBox(height: 16),
+
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                minHeight: 8,
+                                backgroundColor: const Color(0xFFEBEEF1),
+                                valueColor: const AlwaysStoppedAnimation(
+                                  Color(0XFF001A41),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: item["progress"],
-                            minHeight: 8,
-                            backgroundColor: const Color(0xFFEBEEF1),
-                            valueColor: const AlwaysStoppedAnimation(
-                              Color(0xFF001A41),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
