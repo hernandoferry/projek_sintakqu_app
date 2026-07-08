@@ -76,12 +76,17 @@ class _KeamananState extends State<Keamanan> {
                   Icon(Icons.security, size: 35),
                   SizedBox(height: 16),
                   Text(
-                    "Pengaturan keamanan akun dan perangkat anda",
+                    "Pengaturan keamanan akun dan perangkat anda.",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                       color: Color(0XFF44474E),
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    '[FITUR INI MASIH DALAM TAHAP PENGEMBANGAN !]',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

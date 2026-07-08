@@ -32,7 +32,7 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
     _muatDataAwalUser();
   }
 
-  // Ambil data dari SQLite untuk ditampilkan pertama kali di form
+  // Ambil data dari firebase untuk ditampilkan pertama kali di form
   Future<void> _muatDataAwalUser() async {
     try {
       final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -354,7 +354,11 @@ class _PengaturanAkunState extends State<PengaturanAkun> {
                 ),
               ),
             ),
-
+            Text(
+              "[FITUR DI BAWAH INI MASIH DALAM TAHAP PENGEMBANGAN !]",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 16,
