@@ -11,6 +11,7 @@ import 'package:sintakqu/services/firestore_service.dart';
 import 'package:sintakqu/view/profile/keamanan.dart';
 import 'package:sintakqu/view/profile/pengaturan_akun.dart';
 import 'package:sintakqu/view/profile/pusat_bantuan.dart';
+import 'package:sintakqu/view/profile/tema_aplikasi.dart';
 
 class IndexProfile extends StatefulWidget {
   final String defaultImageUrl;
@@ -305,6 +306,50 @@ class _IndexProfileState extends State<IndexProfile> {
                         ),
                       ),
                       Divider(color: Color(0x4DC5C6CF)),
+
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              backgroundColor: Color(0x1A0050CC),
+                              radius: 20,
+                              child: Icon(
+                                Icons.palette_outlined,
+                                color: Color(0xFF0050CC),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            TextButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const TemaAplikasi(),
+                                  ),
+                                );
+
+                                setState(() {
+                                  _ambilDataUser = _inisialisasiDataUser();
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Tema Aplikasi",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF181C1E),
+                                    ),
+                                  ),
+                                  SizedBox(width: 11),
+                                  Icon(Icons.arrow_forward_ios),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                       Padding(
                         padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),

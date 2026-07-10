@@ -19,7 +19,6 @@ class _IndexLaporanState extends State<IndexLaporan> {
   // 1. Inisialisasi controller dan penampung data di atas override build
   final TextEditingController _dateController = TextEditingController();
   List<TransaksiCloudModel> _hasilPencarian = [];
-  // List<Map<String, dynamic>> _hasilPencarian = [];
 
   // 2. Fungsi saat TextField di-tap
   Future<void> _pilihTanggal(BuildContext context) async {

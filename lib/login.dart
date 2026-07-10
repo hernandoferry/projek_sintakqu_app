@@ -294,41 +294,6 @@ class _LoginState extends State<Login> {
                                     builder: (context) => const IndexHome(),
                                   ),
                                 );
-
-                                // bool isLoginSukses = await DbHelper().cekLogin(
-                                //   emailInput,
-                                //   passwordInput,
-                                // );
-
-                                // if (!context.mounted) return;
-                                // Navigator.pop(context);
-
-                                // if (isLoginSukses) {
-                                //   if (!context.mounted) return;
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     const SnackBar(
-                                //       content: Text('Login Berhasil!'),
-                                //       backgroundColor: Colors.green,
-                                //     ),
-                                //   );
-                                //   if (!context.mounted) return;
-                                //   Navigator.pushReplacement(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (context) => const IndexHome(),
-                                //     ),
-                                //   );
-                                // } else {
-                                //   if (!context.mounted) return;
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     const SnackBar(
-                                //       content: Text(
-                                //         'Email atau Kata Sandi salah!',
-                                //       ),
-                                //       backgroundColor: Colors.red,
-                                //     ),
-                                //   );
-                                // }
                               } on FirebaseAuthException catch (e) {
                                 String pesan = "Login gagal";
 
@@ -361,18 +326,6 @@ class _LoginState extends State<Login> {
                                     backgroundColor: Colors.red,
                                   ),
                                 );
-
-                                // if (!context.mounted) return;
-                                // Navigator.pop(context);
-
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text(
-                                //       'Terjadi kesalahan database: $e',
-                                //     ),
-                                //     backgroundColor: Colors.orange,
-                                //   ),
-                                // );
                               }
                             }
                           },

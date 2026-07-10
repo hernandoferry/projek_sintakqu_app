@@ -69,7 +69,6 @@ class _TransaksiState extends State<Transaksi> {
       updatedAt: DateTime.now(),
     );
 
-    // await DbHelper().tambahTransaksi(buatTransaksi.toMap());
     //simpan data transaksi ke firebase
     await _transaksiService.tambahTransaksi(buatTransaksi);
 

@@ -18,7 +18,6 @@ class EditTransaksiHelper extends StatefulWidget {
 
   @override
   State<EditTransaksiHelper> createState() => _EditTransaksiHelperState();
-  // _EditTransaksiHelperState createState() => _EditTransaksiHelperState();
 }
 
 class _EditTransaksiHelperState extends State<EditTransaksiHelper> {
