@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sintakqu/view/profile/ganti_password.dart';
 
 class Keamanan extends StatefulWidget {
   const Keamanan({super.key});
@@ -146,10 +147,6 @@ class _KeamananState extends State<Keamanan> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  Text(
-                    '[FITUR INI MASIH DALAM TAHAP PENGEMBANGAN !]',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
                 ],
               ),
             ),
@@ -190,51 +187,56 @@ class _KeamananState extends State<Keamanan> {
                     "Ganti password akun kamu secara berkala",
                   ),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GantiPassword()),
+                    );
+                  },
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            const Padding(
-              padding: EdgeInsets.only(left: 20, right: 16),
-              child: Text(
-                "PERLINDUNGAN TAMBAHAN",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                  color: Color(0xFF44474E),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                color: Color(0xFFFFFFFF),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.phonelink_lock,
-                    color: Color(0xFF0050CC),
-                  ),
-                  title: const Text(
-                    "Verifikasi 2 Langkah",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                  ),
-                  subtitle: const Text(
-                    "Amankan akun dengan kode verifikasi HP",
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
-                ),
-              ),
-            ),
+            // const SizedBox(height: 24),
+            // const Padding(
+            //   padding: EdgeInsets.only(left: 20, right: 16),
+            //   child: Text(
+            //     "PERLINDUNGAN TAMBAHAN",
+            //     style: TextStyle(
+            //       fontWeight: FontWeight.w500,
+            //       fontSize: 12,
+            //       color: Color(0xFF44474E),
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(height: 8),
+            // Container(
+            //   width: double.infinity,
+            //   decoration: const BoxDecoration(
+            //     borderRadius: BorderRadius.only(
+            //       topLeft: Radius.circular(12),
+            //       topRight: Radius.circular(12),
+            //     ),
+            //     color: Color(0xFFFFFFFF),
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(16),
+            //     child: ListTile(
+            //       leading: const Icon(
+            //         Icons.phonelink_lock,
+            //         color: Color(0xFF0050CC),
+            //       ),
+            //       title: const Text(
+            //         "Verifikasi 2 Langkah",
+            //         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            //       ),
+            //       subtitle: const Text(
+            //         "Amankan akun dengan kode verifikasi HP",
+            //       ),
+            //       trailing: const Icon(Icons.chevron_right),
+            //       onTap: () {},
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 24),
             const Padding(
               padding: EdgeInsets.only(left: 20, right: 16),
