@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Keamanan extends StatefulWidget {
   const Keamanan({super.key});
@@ -11,6 +13,7 @@ class Keamanan extends StatefulWidget {
 }
 
 class _KeamananState extends State<Keamanan> {
+  //fungsi untuk mendapatkan info device
   Future<String> getNamaPerangkat() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
@@ -40,6 +43,65 @@ class _KeamananState extends State<Keamanan> {
     }
 
     return "Perangkat tidak dikenal";
+  }
+
+  //fungsi untuk mendapatkan lokasi/negara
+  final Geocoding _geocoding = Geocoding();
+
+  Future<String> getLokasi() async {
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!serviceEnabled) {
+        return "GPS dimatikan";
+      }
+
+      permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+
+        if (permission == LocationPermission.denied) {
+          return "Izin lokasi ditolak";
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return "Izin lokasi ditolak permanen";
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      debugPrint(
+        "Latitude: ${position.latitude}, Longitude: ${position.longitude}",
+      );
+
+      List<Placemark> placemarks = await _geocoding.placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks.first;
+
+      String kota =
+          place.locality ?? place.subAdministrativeArea ?? "Tidak diketahui";
+
+      String negara = place.country ?? "";
+
+      return "$kota, $negara";
+    } catch (e, stackTrace) {
+      debugPrint("ERROR LOKASI: $e");
+      debugPrint(stackTrace.toString());
+
+      rethrow;
+    }
   }
 
   @override
@@ -241,8 +303,20 @@ class _KeamananState extends State<Keamanan> {
                           ),
                         ],
                       ),
-                      subtitle: const Text(
-                        "Jakarta, Indonesia • Aktif sekarang",
+                      subtitle: FutureBuilder(
+                        future: getLokasi(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text("Mendeteksi lokasi...");
+                          }
+
+                          if (snapshot.hasError) {
+                            return const Text("Gagal mendapatkan lokasi");
+                          }
+
+                          return Text("${snapshot.data} • Aktif sekarang");
+                        },
                       ),
                     ),
                   ),

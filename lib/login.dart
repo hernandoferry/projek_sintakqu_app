@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sintakqu/lupa_password.dart';
 import 'package:sintakqu/register.dart';
 import 'package:sintakqu/services/firebase_auth_service.dart';
 import 'package:sintakqu/services/firestore_service.dart';
@@ -155,7 +156,12 @@ class _LoginState extends State<Login> {
                           const Spacer(),
                           GestureDetector(
                             onTap: () {
-                              // Aksi lupa kata sandi
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LupaPassword(),
+                                ),
+                              );
                             },
                             child: const Text(
                               'Lupa Kata Sandi ?',

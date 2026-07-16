@@ -5,7 +5,7 @@ class TemaAplikasi extends StatefulWidget {
   const TemaAplikasi({super.key});
 
   @override
-  _TemaAplikasiState createState() => _TemaAplikasiState();
+  State<TemaAplikasi> createState() => _TemaAplikasiState();
 }
 
 class _TemaAplikasiState extends State<TemaAplikasi> {

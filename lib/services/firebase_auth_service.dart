@@ -48,4 +48,28 @@ class FirebaseAuthService {
   User? get currentUser {
     return _auth.currentUser;
   }
+
+  //reset password sintakqu
+  Future<void> resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          throw Exception('Format email tidak valid.');
+        case 'user-not-found':
+          throw Exception('Email tidak terdaftar.');
+        case 'network-request-failed':
+          throw Exception('Tidak ada koneksi internet.');
+        case 'too-many-requests':
+          throw Exception(
+            'Terlalu banyak percobaan. Silakan coba beberapa saat lagi.',
+          );
+        default:
+          throw Exception(e.message ?? 'Terjadi kesalahan.');
+      }
+    } catch (_) {
+      throw Exception('Terjadi kesalahan.');
+    }
+  }
 }
