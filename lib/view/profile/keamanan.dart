@@ -108,9 +108,7 @@ class _KeamananState extends State<Keamanan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFF7FAFD,
-      ), // Menambahkan background dasar layout
+      backgroundColor: const Color(0xFFF7FAFD),
       appBar: AppBar(
         title: const Text(
           "Keamanan",
@@ -128,7 +126,6 @@ class _KeamananState extends State<Keamanan> {
         ),
       ),
       body: SingleChildScrollView(
-        // Ditambahkan agar layar bisa di-scroll jika overflow
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -251,7 +248,6 @@ class _KeamananState extends State<Keamanan> {
             ),
             const SizedBox(height: 8),
 
-            // PERBAIKAN UTAMA: Memasukkan FutureBuilder langsung ke dalam struktur komponen kartu
             FutureBuilder<String>(
               future: getNamaPerangkat(),
               builder: (context, snapshot) {
@@ -283,7 +279,6 @@ class _KeamananState extends State<Keamanan> {
                       ),
                       title: Row(
                         children: [
-                          // Menggunakan data dinamis hasil deteksi
                           Expanded(
                             child: Text(
                               namaMesin,

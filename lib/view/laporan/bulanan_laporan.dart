@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:sintakqu/services/export_excel_service.dart';
 import 'package:sintakqu/services/export_pdf_service.dart';
 import 'package:sintakqu/services/transaksi_service.dart';
@@ -145,33 +144,20 @@ class _BulananLaporanState extends State<BulananLaporan> {
 
                                 if (!mounted) return;
 
-                                final result = await OpenFilex.open(file.path);
-
-                                if (!mounted) return;
-
-                                if (result.type == ResultType.done) {
-                                  messenger.showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'PDF berhasil dibuat dan dibuka',
-                                      ),
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        3,
-                                        226,
-                                        118,
-                                      ),
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'PDF berhasil dibuat.\nLokasi file:\n${file.path}',
                                     ),
-                                  );
-                                } else {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'PDF berhasil dibuat tetapi tidak dapat dibuka: ${result.message}',
-                                      ),
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      3,
+                                      226,
+                                      118,
                                     ),
-                                  );
-                                }
+                                    duration: const Duration(seconds: 5),
+                                  ),
+                                );
                               } catch (e) {
                                 if (!mounted) return;
 
@@ -217,33 +203,22 @@ class _BulananLaporanState extends State<BulananLaporan> {
                                       daftarBulanTersedia[bulanTerpilih],
                                     );
 
-                                final result = await OpenFilex.open(file.path);
-
                                 if (!mounted) return;
 
-                                if (result.type == ResultType.done) {
-                                  messenger.showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Excel berhasil dibuat dan dibuka',
-                                      ),
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        3,
-                                        226,
-                                        118,
-                                      ),
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Excel berhasil dibuat.\nLokasi file:\n${file.path}',
                                     ),
-                                  );
-                                } else {
-                                  messenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Excel berhasil dibuat tetapi tidak dapat dibuka: ${result.message}',
-                                      ),
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      3,
+                                      226,
+                                      118,
                                     ),
-                                  );
-                                }
+                                    duration: const Duration(seconds: 5),
+                                  ),
+                                );
                               } catch (e) {
                                 if (!mounted) return;
 
